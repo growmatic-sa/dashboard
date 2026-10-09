@@ -394,7 +394,19 @@
     var color = function (s) { return single ? cssVar("--primary") : (isDark() ? s.color.dark : s.color.light); };
 
     var periodSel = $("#period-select");
-    if (periodSel) periodSel.addEventListener("change", function () { $("#report-form").submit(); });
+    // نسخة العرض الثابتة: كل فترة صفحة جاهزة في مسار خاص بيها
+    var isStatic = document.body.dataset.static === "1";
+    var kindNow = ($("#report-form [name=kind]") || {}).value;
+    var periodUrl = function (key) {
+      if (isStatic) return "/" + document.body.dataset.store + "/reports/" + kindNow + "/" + key + "/";
+      var url = new URL(window.location.href);
+      url.searchParams.set("period", key);
+      return url.toString();
+    };
+    if (periodSel) periodSel.addEventListener("change", function () {
+      if (isStatic) window.location.href = periodUrl(periodSel.value);
+      else $("#report-form").submit();
+    });
     var printBtn = $("#print-btn");
     if (printBtn) printBtn.addEventListener("click", function () { window.print(); });
 
@@ -493,9 +505,7 @@
         hit.addEventListener("pointerleave", function () { tip.style.opacity = 0; });
         hit.addEventListener("blur", function () { tip.style.opacity = 0; });
         var go = function () {
-          var url = new URL(window.location.href);
-          url.searchParams.set("period", rows[i].key);
-          window.location.href = url.toString();
+          window.location.href = periodUrl(rows[i].key);
         };
         hit.addEventListener("click", go);
         hit.addEventListener("keydown", function (e) { if (e.key === "Enter") go(); });

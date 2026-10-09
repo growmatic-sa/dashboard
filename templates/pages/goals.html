@@ -78,7 +78,7 @@
 
   <section class="card">
     <div class="card-head"><div><h2>تعديل أهداف الشهر</h2><p class="muted small">الهدف المقترح = آخر شهر مكتمل + 10%</p></div><span class="kpi-icon">{{ icon('target', 18) }}</span></div>
-    {% if editable %}
+    {% if editable and not static_demo %}
     <form method="post" action="{{ url_for('goals_save') }}">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       {% for r in goal_rows %}
@@ -90,7 +90,7 @@
       <button class="btn primary block" type="submit">حفظ الأهداف</button>
     </form>
     {% else %}
-    <p class="muted">تعديل الأهداف متاح للمالك والمدير فقط.</p>
+    <p class="muted">{{ 'تعديل الأهداف متاح في النسخة الكاملة.' if static_demo else 'تعديل الأهداف متاح للمالك والمدير فقط.' }}</p>
     {% endif %}
   </section>
 </div>

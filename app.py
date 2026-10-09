@@ -160,6 +160,7 @@ def inject_globals():
         "store_names": STORES,
         "can_page": lambda page: bool(user) and can_access_page(user["role"], page),
         "alerts": alerts_for(user, store),
+        "static_demo": app.config.get("STATIC_DEMO", False),
     }
 
 

@@ -1392,3 +1392,8 @@ input[type=range]:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 4px va
 }
 
 .spaced-b { margin-bottom: 20px; }
+
+.demo-strip {
+  background: var(--warn-soft); color: var(--warn); font-size: .84rem; font-weight: 600;
+  text-align: center; padding: 8px 16px; border-bottom: 1px solid var(--line);
+}

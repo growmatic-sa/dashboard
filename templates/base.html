@@ -4,11 +4,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% if static_demo %}<meta name="robots" content="noindex, nofollow">{% endif %}
   <title>{{ title or "لوحة التحكم" }} · {{ brand.name }}</title>
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=9">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=10">
   <style>
     :root {
       --fill: {{ brand.light.fill }}; --primary: {{ brand.light.primary }}; --strong: {{ brand.light.strong }};
@@ -29,7 +31,7 @@
     try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
   </script>
 </head>
-<body data-store="{{ store }}">
+<body data-store="{{ store }}"{% if static_demo %} data-static="1"{% endif %}>
 {% if current_user %}
 <div class="shell">
   <aside class="sidebar" id="sidebar">
@@ -44,7 +46,7 @@
     <nav class="sb-nav">
       {% set ns = namespace(group=None) %}
       {% for key, page in pages.items() %}
-        {% if can_page(key) %}
+        {% if can_page(key) and not (static_demo and key == 'users') %}
           {% if page.group != ns.group %}
             <div class="sb-group">{{ page.group }}</div>
             {% set ns.group = page.group %}
@@ -56,7 +58,7 @@
           </a>
         {% endif %}
       {% endfor %}
-      {% if can_page('users') %}
+      {% if can_page('users') and not static_demo %}
         <a href="{{ url_for('audit') }}" class="sb-link {{ 'active' if request.endpoint == 'audit' }}">
           {{ icon('log') }}<span>سجل النشاط</span>
         </a>
@@ -69,10 +71,12 @@
         <div class="sb-user-name">{{ current_user.name }}</div>
         <div class="sb-user-role">{{ role_names[current_user.role] }}</div>
       </div>
+      {% if not static_demo %}
       <form method="post" action="{{ url_for('logout') }}">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <button class="icon-btn on-dark" type="submit" title="تسجيل الخروج" aria-label="تسجيل الخروج">{{ icon('logout', 18) }}</button>
       </form>
+      {% endif %}
     </div>
   </aside>
   <div class="scrim" id="scrim"></div>
@@ -133,6 +137,9 @@
       </div>
     </header>
 
+    {% if static_demo %}
+    <div class="demo-strip">نسخة عرض ببيانات تجريبية · الحفظ والتصدير الفعلي وربط سلة في النسخة الكاملة</div>
+    {% endif %}
     <main class="content">
       {% with messages = get_flashed_messages(with_categories=true) %}
         {% for category, message in messages %}
@@ -146,7 +153,7 @@
 
 <div class="toast-stack" id="toasts" aria-live="polite"></div>
 {% block overlay %}{% endblock %}
-<script src="{{ url_for('static', filename='app.js') }}?v=9"></script>
+<script src="{{ url_for('static', filename='app.js') }}?v=10"></script>
 {% block scripts %}{% endblock %}
 {% else %}
   {% block public %}{% endblock %}
