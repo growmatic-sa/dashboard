@@ -1,0 +1,806 @@
+
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>التسويق · Growmatic</title>
+  <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css?v=10">
+  <style>
+    :root {
+      --fill: #5b4cf0; --primary: #5b4cf0; --strong: #4433d6;
+      --soft: #efedff; --glow: #a497ff;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --fill: #6a5cf5; --primary: #8c80ff; --strong: #a499ff;
+        --soft: #231f4a; --glow: #5b4cf0;
+      }
+    }
+    :root[data-theme="dark"] {
+      --fill: #6a5cf5; --primary: #8c80ff; --strong: #a499ff;
+      --soft: #231f4a; --glow: #5b4cf0;
+    }
+  </style>
+  <script>
+    try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+  </script>
+</head>
+<body data-store="all" data-static="1">
+
+<div class="shell">
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-brand">
+      <svg width="36" height="36" viewBox="0 0 40 40" aria-hidden="true">
+  <defs>
+    <linearGradient id="pm-g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#a497ff"/><stop offset="1" stop-color="#5b4cf0"/>
+    </linearGradient>
+  </defs>
+  <rect width="40" height="40" rx="11" fill="url(#pm-g)"/>
+  <path d="M12 27c0-8 6-14 16-15-1 10-7 16-15 16" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M13 27 21 19" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/>
+</svg>
+      <div>
+        <div class="sb-name">Growmatic</div>
+        <div class="sb-tag">لوحة إدارة المتاجر</div>
+      </div>
+    </div>
+
+    <nav class="sb-nav">
+      
+      
+        
+          
+            <div class="sb-group">عام</div>
+            
+          
+          
+          
+          <a href="/all/dashboard/" class="sb-link ">
+            <svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20h14V9.5"/><path d="M10 20v-6h4v6"/></svg><span>الرئيسية</span>
+          </a>
+        
+      
+        
+          
+          
+          
+          <a href="/all/insights/" class="sb-link ">
+            <svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg><span>الرؤى والتوصيات</span>
+          </a>
+        
+      
+        
+          
+            <div class="sb-group">العمليات</div>
+            
+          
+          
+          
+          <a href="/all/orders/" class="sb-link ">
+            <svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1.2 12H6.2z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg><span>الطلبات</span>
+          </a>
+        
+      
+        
+          
+          
+          
+          <a href="/all/products/" class="sb-link ">
+            <svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.5"/></svg><span>المنتجات</span>
+          </a>
+        
+      
+        
+          
+          
+          
+          <a href="/all/inventory/" class="sb-link ">
+            <svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7.5 12 3l9 4.5-9 4.5z"/><path d="M3 7.5V16.5L12 21l9-4.5V7.5"/><path d="M12 12v9"/></svg><span>المخزون</span>
+          </a>
+        
+      
+        
+          
+          
+          
+          <a href="/all/customers/" class="sb-link ">
+            <svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7"/><path d="M18 14a6.5 6.5 0 0 1 3.5 6"/></svg><span>العملاء</span>
+          </a>
+        
+      
+        
+          
+            <div class="sb-group">التحليل والقرار</div>
+            
+          
+          
+          
+          <a href="/all/reports/month/2026-10/" class="sb-link ">
+            <svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10"/><path d="M10 20V4"/><path d="M16 20v-7"/><path d="M22 20H2"/></svg><span>التقارير</span>
+          </a>
+        
+      
+        
+          
+          
+          
+          <a href="/all/marketing/30/" class="sb-link active">
+            <svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11v2a1 1 0 0 0 1 1h3l6 4V6L7 10H4a1 1 0 0 0-1 1z"/><path d="M17 8a5 5 0 0 1 0 8"/><path d="M7 14v4"/></svg><span>التسويق</span>
+          </a>
+        
+      
+        
+          
+          
+          
+          <a href="/all/goals/" class="sb-link ">
+            <svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/></svg><span>الأهداف والتوقعات</span>
+          </a>
+        
+      
+        
+          
+          
+          
+          <a href="/all/simulator/" class="sb-link ">
+            <svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg><span>محاكي القرارات</span>
+          </a>
+        
+      
+        
+          
+            <div class="sb-group">الإدارة</div>
+            
+          
+          
+          
+          <a href="/all/settings/" class="sb-link ">
+            <svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span>الإعدادات</span>
+          </a>
+        
+      
+        
+      
+      
+    </nav>
+
+    <div class="sb-user">
+      <div class="avatar">ع</div>
+      <div class="sb-user-info">
+        <div class="sb-user-name">عرض تجريبي</div>
+        <div class="sb-user-role">مالك</div>
+      </div>
+      
+    </div>
+  </aside>
+  <div class="scrim" id="scrim"></div>
+
+  <div class="main">
+    <header class="topbar">
+      <button class="icon-btn only-mobile" id="menu-btn" aria-label="القائمة"><svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+
+      
+      <div class="store-switch" role="tablist" aria-label="اختيار المتجر">
+        
+          
+          <a role="tab" aria-selected="true"
+             class="store-pill active" data-key="all"
+             href="/all/marketing/30/">
+            <span class="pill-mark"><svg width="20" height="20" viewBox="0 0 40 40" aria-hidden="true">
+  <defs>
+    <linearGradient id="pm-g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#a497ff"/><stop offset="1" stop-color="#5b4cf0"/>
+    </linearGradient>
+  </defs>
+  <rect width="40" height="40" rx="11" fill="url(#pm-g)"/>
+  <path d="M12 27c0-8 6-14 16-15-1 10-7 16-15 16" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M13 27 21 19" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/>
+</svg></span>
+            <span>كل المتاجر</span>
+          </a>
+        
+          
+          <a role="tab" aria-selected="false"
+             class="store-pill " data-key="smooth"
+             href="/smooth/marketing/30/">
+            <img src="/static/brands/smooth-logo.webp" alt="">
+            <span>سموذ</span>
+          </a>
+        
+          
+          <a role="tab" aria-selected="false"
+             class="store-pill " data-key="glorias"
+             href="/glorias/marketing/30/">
+            <img src="/static/brands/glorias-logo.webp" alt="">
+            <span>قلوريز</span>
+          </a>
+        
+      </div>
+      
+
+      <div class="topbar-end">
+        <label class="search" id="search-wrap" hidden>
+          <svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input type="search" id="search" placeholder="ابحث..." autocomplete="off">
+        </label>
+        
+        <div class="bell-wrap">
+          <button class="icon-btn bell" id="bell-btn" aria-label="التنبيهات" aria-expanded="false" aria-controls="bell-panel">
+            <svg class="ic" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>
+            <span class="bell-count">10</span>
+          </button>
+          <div class="bell-panel" id="bell-panel" hidden>
+            <div class="bell-head"><strong>التنبيهات</strong><span class="muted small">10 تنبيه</span></div>
+            <ul>
+              
+              <li class="tone-danger">
+                <span class="dot danger"></span>
+                <div><div class="feed-title">«ماسك طين للبشرة الدهنية» نافد وعليه طلب</div><div class="muted small">المخزون</div></div>
+              </li>
+              
+              <li class="tone-danger">
+                <span class="dot danger"></span>
+                <div><div class="feed-title">«رموش طبيعية ناعمة» نافد وعليه طلب</div><div class="muted small">المخزون</div></div>
+              </li>
+              
+              <li class="tone-danger">
+                <span class="dot danger"></span>
+                <div><div class="feed-title">2 طلب متأخر في التجهيز</div><div class="muted small">العمليات</div></div>
+              </li>
+              
+              <li class="tone-warn">
+                <span class="dot warn"></span>
+                <div><div class="feed-title">متوقع نوصل 91% من هدف أكتوبر 2026</div><div class="muted small">الأهداف</div></div>
+              </li>
+              
+              <li class="tone-warn">
+                <span class="dot warn"></span>
+                <div><div class="feed-title">قناة مؤثرين بتخسر بعد مصروف الإعلان</div><div class="muted small">التسويق</div></div>
+              </li>
+              
+              <li class="tone-warn">
+                <span class="dot warn"></span>
+                <div><div class="feed-title">إلغاء الدفع عند الاستلام 14%</div><div class="muted small">العمليات</div></div>
+              </li>
+              
+            </ul>
+            <a class="bell-all" href="/all/insights/">كل الرؤى والتوصيات <svg class="ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="m11 18-6-6 6-6"/></svg></a>
+          </div>
+        </div>
+        
+        <button class="icon-btn" id="theme-btn" aria-label="تبديل الوضع الليلي" title="الوضع الليلي">
+          <span class="when-light"><svg class="ic" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></span><span class="when-dark"><svg class="ic" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span>
+        </button>
+      </div>
+    </header>
+
+    
+    <div class="demo-strip">نسخة عرض ببيانات تجريبية · الحفظ والتصدير الفعلي وربط سلة في النسخة الكاملة</div>
+    
+    <main class="content">
+      
+        
+      
+      
+<div class="page-head">
+  <div>
+    <h1>التسويق والإعلانات</h1>
+    <p class="muted">آخر 30 يوم · كل المتاجر</p>
+  </div>
+  <span class="demo-badge">بيانات تجريبية للعرض</span>
+</div>
+
+<div class="filter-row">
+  <div class="segmented" role="radiogroup" aria-label="الفترة">
+    
+      <a role="radio" aria-checked="false" class="seg-link " href="/all/marketing/7/">7 أيام</a>
+    
+      <a role="radio" aria-checked="true" class="seg-link active" href="/all/marketing/30/">30 يوم</a>
+    
+      <a role="radio" aria-checked="false" class="seg-link " href="/all/marketing/90/">90 يوم</a>
+    
+  </div>
+  <span class="muted small">العائد = المبيعات ÷ مصروف الإعلان</span>
+</div>
+
+<section class="kpis">
+  <article class="kpi plain">
+    <div class="kpi-top"><span class="kpi-icon"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11v2a1 1 0 0 0 1 1h3l6 4V6L7 10H4a1 1 0 0 0-1 1z"/><path d="M17 8a5 5 0 0 1 0 8"/><path d="M7 14v4"/></svg></span><span class="kpi-label">مصروف الإعلانات</span></div>
+    <div class="kpi-value">47,208 <small>ر.س</small></div>
+    <div class="kpi-foot"><span class="muted small">22.0% من المبيعات</span></div>
+  </article>
+  <article class="kpi plain">
+    <div class="kpi-top"><span class="kpi-icon"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10"/><path d="M10 20V4"/><path d="M16 20v-7"/><path d="M22 20H2"/></svg></span><span class="kpi-label">العائد الإجمالي (MER)</span></div>
+    <div class="kpi-value">4.5<small>×</small></div>
+    <div class="kpi-foot"><span class="muted small">كل ريال إعلان جاب 4.5 ر.س مبيعات</span></div>
+  </article>
+  <article class="kpi plain">
+    <div class="kpi-top"><span class="kpi-icon"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7"/><path d="M18 14a6.5 6.5 0 0 1 3.5 6"/></svg></span><span class="kpi-label">تكلفة جلب العميل</span></div>
+    <div class="kpi-value">69 <small>ر.س</small></div>
+    <div class="kpi-foot"><span class="muted small">684 عميل جديد من الإعلانات</span></div>
+  </article>
+  <article class="kpi plain">
+    <div class="kpi-top"><span class="kpi-icon"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/><circle cx="12" cy="12" r="2"/></svg></span><span class="kpi-label">الربح بعد الإعلانات</span></div>
+    <div class="kpi-value"><bdi dir="ltr">52,444</bdi> <small>ر.س</small></div>
+    <div class="kpi-foot"><span class="muted small">قبل الإعلانات 99,652 ر.س</span></div>
+  </article>
+</section>
+
+  <section class="card flush spaced-b">
+    <div class="card-head padded"><div><h2>أداء القنوات</h2><p class="muted small">مرتّبة من الأعلى عائداً · الربح بعد خصم مصروف القناة</p></div></div>
+    <table class="data-table">
+      <thead><tr><th>القناة</th><th class="end">المصروف</th><th class="end">الطلبات</th><th class="end">المبيعات</th><th>العائد</th><th class="end">عملاء جدد</th><th class="end">تكلفة العميل</th><th class="end">الربح بعد الإعلان</th></tr></thead>
+      <tbody>
+        
+        
+        <tr>
+          <td><strong>قوقل</strong></td>
+          <td class="end num">3,992</td>
+          <td class="end num">119</td>
+          <td class="end num">24,138</td>
+          <td class="meter-cell"><div class="meter-inline"><div class="meter thin"><span class="ok" style="--w: 100.0%"></span></div><span class="num small"><strong>6.0×</strong></span></div></td>
+          <td class="end num">73</td>
+          <td class="end num">55</td>
+          <td class="end num"><bdi dir="ltr">7,220</bdi></td>
+        </tr>
+        
+        <tr>
+          <td><strong>تيك توك</strong></td>
+          <td class="end num">9,822</td>
+          <td class="end num">261</td>
+          <td class="end num">54,219</td>
+          <td class="meter-cell"><div class="meter-inline"><div class="meter thin"><span class="ok" style="--w: 91.3%"></span></div><span class="num small"><strong>5.5×</strong></span></div></td>
+          <td class="end num">170</td>
+          <td class="end num">58</td>
+          <td class="end num"><bdi dir="ltr">15,596</bdi></td>
+        </tr>
+        
+        <tr>
+          <td><strong>سناب شات</strong></td>
+          <td class="end num">13,845</td>
+          <td class="end num">331</td>
+          <td class="end num">58,833</td>
+          <td class="meter-cell"><div class="meter-inline"><div class="meter thin"><span class="ok" style="--w: 70.3%"></span></div><span class="num small"><strong>4.2×</strong></span></div></td>
+          <td class="end num">211</td>
+          <td class="end num">66</td>
+          <td class="end num"><bdi dir="ltr">13,254</bdi></td>
+        </tr>
+        
+        <tr>
+          <td><strong>انستقرام</strong></td>
+          <td class="end num">12,493</td>
+          <td class="end num">155</td>
+          <td class="end num">29,804</td>
+          <td class="meter-cell"><div class="meter-inline"><div class="meter thin"><span class="danger" style="--w: 39.5%"></span></div><span class="num small"><strong>2.4×</strong></span></div></td>
+          <td class="end num">92</td>
+          <td class="end num">136</td>
+          <td class="end num"><bdi dir="ltr">1,561</bdi></td>
+        </tr>
+        
+        <tr>
+          <td><strong>مؤثرين</strong></td>
+          <td class="end num">7,056</td>
+          <td class="end num">70</td>
+          <td class="end num">11,932</td>
+          <td class="meter-cell"><div class="meter-inline"><div class="meter thin"><span class="danger" style="--w: 28.0%"></span></div><span class="num small"><strong>1.7×</strong></span></div></td>
+          <td class="end num">33</td>
+          <td class="end num">214</td>
+          <td class="end num"><bdi dir="ltr" class="neg">−1,884</bdi></td>
+        </tr>
+        
+        <tr class="muted-row">
+          <td><strong>مباشر</strong> <span class="muted small">بدون إعلان</span></td>
+          <td class="end num">—</td>
+          <td class="end num">176</td>
+          <td class="end num">35,626</td>
+          <td class="muted small">—</td>
+          <td class="end num">105</td>
+          <td class="end num">—</td>
+          <td class="end num"><bdi dir="ltr">16,696</bdi></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+<div class="grid-main">
+  <section class="card">
+  <div class="card-head">
+    <div>
+      <h2>أفضل أوقات البيع</h2>
+      <p class="muted small">عدد الطلبات حسب اليوم والساعة · الذروة الجمعة 21–24 · استخدمه لجدولة الإعلانات والرسائل</p>
+    </div>
+  </div>
+  <div class="table-scroll">
+    <table class="heat">
+      <thead><tr><th></th><th class="center" dir="ltr">00–03</th><th class="center" dir="ltr">03–06</th><th class="center" dir="ltr">06–09</th><th class="center" dir="ltr">09–12</th><th class="center" dir="ltr">12–15</th><th class="center" dir="ltr">15–18</th><th class="center" dir="ltr">18–21</th><th class="center" dir="ltr">21–24</th></tr></thead>
+      <tbody>
+        
+        
+        <tr>
+          <th>الأحد</th>
+          
+            
+            <td class="cell " style="--v: 10.8%" title="الأحد 00–03: 7 طلب"><span class="num">7</span></td>
+          
+            
+            <td class="cell " style="--v: 4.6%" title="الأحد 03–06: 3 طلب"><span class="num">3</span></td>
+          
+            
+            <td class="cell " style="--v: 12.3%" title="الأحد 06–09: 8 طلب"><span class="num">8</span></td>
+          
+            
+            <td class="cell " style="--v: 23.1%" title="الأحد 09–12: 15 طلب"><span class="num">15</span></td>
+          
+            
+            <td class="cell " style="--v: 38.5%" title="الأحد 12–15: 25 طلب"><span class="num">25</span></td>
+          
+            
+            <td class="cell " style="--v: 26.2%" title="الأحد 15–18: 17 طلب"><span class="num">17</span></td>
+          
+            
+            <td class="cell strong" style="--v: 61.5%" title="الأحد 18–21: 40 طلب"><span class="num">40</span></td>
+          
+            
+            <td class="cell " style="--v: 46.2%" title="الأحد 21–24: 30 طلب"><span class="num">30</span></td>
+          
+        </tr>
+        
+        
+        <tr>
+          <th>الاثنين</th>
+          
+            
+            <td class="cell " style="--v: 24.6%" title="الاثنين 00–03: 16 طلب"><span class="num">16</span></td>
+          
+            
+            <td class="cell " style="--v: 4.6%" title="الاثنين 03–06: 3 طلب"><span class="num">3</span></td>
+          
+            
+            <td class="cell " style="--v: 6.2%" title="الاثنين 06–09: 4 طلب"><span class="num">4</span></td>
+          
+            
+            <td class="cell " style="--v: 13.8%" title="الاثنين 09–12: 9 طلب"><span class="num">9</span></td>
+          
+            
+            <td class="cell " style="--v: 35.4%" title="الاثنين 12–15: 23 طلب"><span class="num">23</span></td>
+          
+            
+            <td class="cell " style="--v: 27.7%" title="الاثنين 15–18: 18 طلب"><span class="num">18</span></td>
+          
+            
+            <td class="cell " style="--v: 44.6%" title="الاثنين 18–21: 29 طلب"><span class="num">29</span></td>
+          
+            
+            <td class="cell strong" style="--v: 56.9%" title="الاثنين 21–24: 37 طلب"><span class="num">37</span></td>
+          
+        </tr>
+        
+        
+        <tr>
+          <th>الثلاثاء</th>
+          
+            
+            <td class="cell " style="--v: 6.2%" title="الثلاثاء 00–03: 4 طلب"><span class="num">4</span></td>
+          
+            
+            <td class="cell " style="--v: 3.1%" title="الثلاثاء 03–06: 2 طلب"><span class="num">2</span></td>
+          
+            
+            <td class="cell " style="--v: 3.1%" title="الثلاثاء 06–09: 2 طلب"><span class="num">2</span></td>
+          
+            
+            <td class="cell " style="--v: 13.8%" title="الثلاثاء 09–12: 9 طلب"><span class="num">9</span></td>
+          
+            
+            <td class="cell " style="--v: 29.2%" title="الثلاثاء 12–15: 19 طلب"><span class="num">19</span></td>
+          
+            
+            <td class="cell " style="--v: 32.3%" title="الثلاثاء 15–18: 21 طلب"><span class="num">21</span></td>
+          
+            
+            <td class="cell " style="--v: 52.3%" title="الثلاثاء 18–21: 34 طلب"><span class="num">34</span></td>
+          
+            
+            <td class="cell " style="--v: 49.2%" title="الثلاثاء 21–24: 32 طلب"><span class="num">32</span></td>
+          
+        </tr>
+        
+        
+        <tr>
+          <th>الأربعاء</th>
+          
+            
+            <td class="cell " style="--v: 7.7%" title="الأربعاء 00–03: 5 طلب"><span class="num">5</span></td>
+          
+            
+            <td class="cell " style="--v: 6.2%" title="الأربعاء 03–06: 4 طلب"><span class="num">4</span></td>
+          
+            
+            <td class="cell " style="--v: 6.2%" title="الأربعاء 06–09: 4 طلب"><span class="num">4</span></td>
+          
+            
+            <td class="cell " style="--v: 15.4%" title="الأربعاء 09–12: 10 طلب"><span class="num">10</span></td>
+          
+            
+            <td class="cell " style="--v: 24.6%" title="الأربعاء 12–15: 16 طلب"><span class="num">16</span></td>
+          
+            
+            <td class="cell " style="--v: 40.0%" title="الأربعاء 15–18: 26 طلب"><span class="num">26</span></td>
+          
+            
+            <td class="cell strong" style="--v: 60.0%" title="الأربعاء 18–21: 39 طلب"><span class="num">39</span></td>
+          
+            
+            <td class="cell strong" style="--v: 56.9%" title="الأربعاء 21–24: 37 طلب"><span class="num">37</span></td>
+          
+        </tr>
+        
+        
+        <tr>
+          <th>الخميس</th>
+          
+            
+            <td class="cell " style="--v: 12.3%" title="الخميس 00–03: 8 طلب"><span class="num">8</span></td>
+          
+            
+            <td class="cell " style="--v: 3.1%" title="الخميس 03–06: 2 طلب"><span class="num">2</span></td>
+          
+            
+            <td class="cell " style="--v: 21.5%" title="الخميس 06–09: 14 طلب"><span class="num">14</span></td>
+          
+            
+            <td class="cell " style="--v: 27.7%" title="الخميس 09–12: 18 طلب"><span class="num">18</span></td>
+          
+            
+            <td class="cell " style="--v: 30.8%" title="الخميس 12–15: 20 طلب"><span class="num">20</span></td>
+          
+            
+            <td class="cell " style="--v: 40.0%" title="الخميس 15–18: 26 طلب"><span class="num">26</span></td>
+          
+            
+            <td class="cell strong" style="--v: 67.7%" title="الخميس 18–21: 44 طلب"><span class="num">44</span></td>
+          
+            
+            <td class="cell strong" style="--v: 66.2%" title="الخميس 21–24: 43 طلب"><span class="num">43</span></td>
+          
+        </tr>
+        
+        
+        <tr>
+          <th>الجمعة</th>
+          
+            
+            <td class="cell " style="--v: 15.4%" title="الجمعة 00–03: 10 طلب"><span class="num">10</span></td>
+          
+            
+            <td class="cell " style="--v: 4.6%" title="الجمعة 03–06: 3 طلب"><span class="num">3</span></td>
+          
+            
+            <td class="cell " style="--v: 9.2%" title="الجمعة 06–09: 6 طلب"><span class="num">6</span></td>
+          
+            
+            <td class="cell " style="--v: 33.8%" title="الجمعة 09–12: 22 طلب"><span class="num">22</span></td>
+          
+            
+            <td class="cell " style="--v: 53.8%" title="الجمعة 12–15: 35 طلب"><span class="num">35</span></td>
+          
+            
+            <td class="cell " style="--v: 49.2%" title="الجمعة 15–18: 32 طلب"><span class="num">32</span></td>
+          
+            
+            <td class="cell strong" style="--v: 78.5%" title="الجمعة 18–21: 51 طلب"><span class="num">51</span></td>
+          
+            
+            <td class="cell strong" style="--v: 100.0%" title="الجمعة 21–24: 65 طلب"><span class="num">65</span></td>
+          
+        </tr>
+        
+        
+        <tr>
+          <th>السبت</th>
+          
+            
+            <td class="cell " style="--v: 18.5%" title="السبت 00–03: 12 طلب"><span class="num">12</span></td>
+          
+            
+            <td class="cell " style="--v: 1.5%" title="السبت 03–06: 1 طلب"><span class="num">1</span></td>
+          
+            
+            <td class="cell " style="--v: 6.2%" title="السبت 06–09: 4 طلب"><span class="num">4</span></td>
+          
+            
+            <td class="cell " style="--v: 29.2%" title="السبت 09–12: 19 طلب"><span class="num">19</span></td>
+          
+            
+            <td class="cell " style="--v: 36.9%" title="السبت 12–15: 24 طلب"><span class="num">24</span></td>
+          
+            
+            <td class="cell " style="--v: 30.8%" title="السبت 15–18: 20 طلب"><span class="num">20</span></td>
+          
+            
+            <td class="cell strong" style="--v: 56.9%" title="السبت 18–21: 37 طلب"><span class="num">37</span></td>
+          
+            
+            <td class="cell strong" style="--v: 73.8%" title="السبت 21–24: 48 طلب"><span class="num">48</span></td>
+          
+        </tr>
+        
+      </tbody>
+    </table>
+  </div>
+</section>
+
+  <section class="card">
+    <div class="card-head">
+      <div><h2>الميزانية مقابل المبيعات</h2><p class="muted small">لو حصة الميزانية أكبر من حصة المبيعات، القناة بتاخد أكتر من نصيبها</p></div>
+    </div>
+    <div class="legend legend-block">
+      <span><i style="background: var(--primary)"></i>حصة الميزانية</span>
+      <span><i style="background: var(--ink-2)"></i>حصة المبيعات</span>
+    </div>
+    
+    <ul class="dual-list">
+      
+        
+        
+        <li>
+          <div class="share-head"><span>قوقل</span><span class="muted small num">8% · 13%</span></div>
+          <div class="meter thin"><span class="brand-solid" style="--w: 8.5%"></span></div>
+          <div class="meter thin"><span class="ink" style="--w: 13.5%"></span></div>
+        </li>
+      
+        
+        
+        <li>
+          <div class="share-head"><span>تيك توك</span><span class="muted small num">21% · 30%</span></div>
+          <div class="meter thin"><span class="brand-solid" style="--w: 20.8%"></span></div>
+          <div class="meter thin"><span class="ink" style="--w: 30.3%"></span></div>
+        </li>
+      
+        
+        
+        <li>
+          <div class="share-head"><span>سناب شات</span><span class="muted small num">29% · 33%</span></div>
+          <div class="meter thin"><span class="brand-solid" style="--w: 29.3%"></span></div>
+          <div class="meter thin"><span class="ink" style="--w: 32.9%"></span></div>
+        </li>
+      
+        
+        
+        <li>
+          <div class="share-head"><span>انستقرام</span><span class="muted small num">26% · 17%</span></div>
+          <div class="meter thin"><span class="brand-solid" style="--w: 26.5%"></span></div>
+          <div class="meter thin"><span class="ink" style="--w: 16.7%"></span></div>
+        </li>
+      
+        
+        
+        <li>
+          <div class="share-head"><span>مؤثرين</span><span class="muted small num">15% · 7%</span></div>
+          <div class="meter thin"><span class="brand-solid" style="--w: 14.9%"></span></div>
+          <div class="meter thin"><span class="ink" style="--w: 6.7%"></span></div>
+        </li>
+      
+    </ul>
+  </section>
+</div>
+
+<section class="card flush">
+  <div class="card-head padded"><div><h2>الكوبونات وأكواد المؤثرين</h2><p class="muted small">الربح بعد الخصم وتكلفة البضاعة والشحن والرسوم</p></div><span class="kpi-icon"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.5"/></svg></span></div>
+  <table class="data-table">
+    <thead><tr><th>الكود</th><th>المتجر</th><th class="end">الاستخدام</th><th class="end">الخصم</th><th class="end">المبيعات</th><th class="end">الخصم الممنوح</th><th class="end">متوسط الطلب</th><th class="end">ربح الطلب</th></tr></thead>
+    <tbody>
+      
+      
+      <tr>
+        <td><code class="code">SMOOTH15</code> </td>
+        <td><span class="store-tag smooth">سموذ</span></td>
+        <td class="end num">36</td>
+        <td class="end num">15%</td>
+        <td class="end num">10,319</td>
+        <td class="end num">1,731</td>
+        <td class="end num">287</td>
+        <td class="end num"><span class="badge ok">120 ر.س</span></td>
+      </tr>
+      
+      <tr>
+        <td><code class="code">WELCOME10</code> </td>
+        <td><span class="store-tag smooth">سموذ</span></td>
+        <td class="end num">38</td>
+        <td class="end num">10%</td>
+        <td class="end num">9,189</td>
+        <td class="end num">959</td>
+        <td class="end num">242</td>
+        <td class="end num"><span class="badge ok">103 ر.س</span></td>
+      </tr>
+      
+      <tr>
+        <td><code class="code">NOURA10</code> <span class="badge info">مؤثر</span></td>
+        <td><span class="store-tag smooth">سموذ</span></td>
+        <td class="end num">30</td>
+        <td class="end num">10%</td>
+        <td class="end num">6,651</td>
+        <td class="end num">675</td>
+        <td class="end num">222</td>
+        <td class="end num"><span class="badge ok">95 ر.س</span></td>
+      </tr>
+      
+      <tr>
+        <td><code class="code">VIP20</code> </td>
+        <td><span class="store-tag smooth">سموذ</span></td>
+        <td class="end num">30</td>
+        <td class="end num">20%</td>
+        <td class="end num">6,302</td>
+        <td class="end num">1,426</td>
+        <td class="end num">210</td>
+        <td class="end num"><span class="badge ok">82 ر.س</span></td>
+      </tr>
+      
+      <tr>
+        <td><code class="code">RAWAN15</code> <span class="badge info">مؤثر</span></td>
+        <td><span class="store-tag glorias">قلوريز</span></td>
+        <td class="end num">40</td>
+        <td class="end num">15%</td>
+        <td class="end num">5,281</td>
+        <td class="end num">823</td>
+        <td class="end num">132</td>
+        <td class="end num"><span class="badge warn">58 ر.س</span></td>
+      </tr>
+      
+      <tr>
+        <td><code class="code">LASH15</code> </td>
+        <td><span class="store-tag glorias">قلوريز</span></td>
+        <td class="end num">42</td>
+        <td class="end num">15%</td>
+        <td class="end num">4,738</td>
+        <td class="end num">716</td>
+        <td class="end num">113</td>
+        <td class="end num"><span class="badge warn">49 ر.س</span></td>
+      </tr>
+      
+      <tr>
+        <td><code class="code">WELCOME10</code> </td>
+        <td><span class="store-tag glorias">قلوريز</span></td>
+        <td class="end num">34</td>
+        <td class="end num">10%</td>
+        <td class="end num">4,655</td>
+        <td class="end num">466</td>
+        <td class="end num">137</td>
+        <td class="end num"><span class="badge warn">61 ر.س</span></td>
+      </tr>
+      
+      <tr>
+        <td><code class="code">GLOW20</code> </td>
+        <td><span class="store-tag glorias">قلوريز</span></td>
+        <td class="end num">26</td>
+        <td class="end num">20%</td>
+        <td class="end num">2,826</td>
+        <td class="end num">604</td>
+        <td class="end num">109</td>
+        <td class="end num"><span class="badge warn">44 ر.س</span></td>
+      </tr>
+      
+    </tbody>
+  </table>
+</section>
+
+
+
+    </main>
+  </div>
+</div>
+
+<div class="toast-stack" id="toasts" aria-live="polite"></div>
+
+<script src="/static/app.js?v=10"></script>
+
+
+</body>
+</html>

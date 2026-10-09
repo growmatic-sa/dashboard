@@ -1,0 +1,953 @@
+
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>التقارير · Growmatic</title>
+  <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css?v=10">
+  <style>
+    :root {
+      --fill: #5b4cf0; --primary: #5b4cf0; --strong: #4433d6;
+      --soft: #efedff; --glow: #a497ff;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --fill: #6a5cf5; --primary: #8c80ff; --strong: #a499ff;
+        --soft: #231f4a; --glow: #5b4cf0;
+      }
+    }
+    :root[data-theme="dark"] {
+      --fill: #6a5cf5; --primary: #8c80ff; --strong: #a499ff;
+      --soft: #231f4a; --glow: #5b4cf0;
+    }
+  </style>
+  <script>
+    try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+  </script>
+</head>
+<body data-store="all" data-static="1">
+
+<div class="shell">
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-brand">
+      <svg width="36" height="36" viewBox="0 0 40 40" aria-hidden="true">
+  <defs>
+    <linearGradient id="pm-g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#a497ff"/><stop offset="1" stop-color="#5b4cf0"/>
+    </linearGradient>
+  </defs>
+  <rect width="40" height="40" rx="11" fill="url(#pm-g)"/>
+  <path d="M12 27c0-8 6-14 16-15-1 10-7 16-15 16" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M13 27 21 19" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/>
+</svg>
+      <div>
+        <div class="sb-name">Growmatic</div>
+        <div class="sb-tag">لوحة إدارة المتاجر</div>
+      </div>
+    </div>
+
+    <nav class="sb-nav">
+      
+      
+        
+          
+            <div class="sb-group">عام</div>
+            
+          
+          
+          
+          <a href="/all/dashboard/" class="sb-link ">
+            <svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20h14V9.5"/><path d="M10 20v-6h4v6"/></svg><span>الرئيسية</span>
+          </a>
+        
+      
+        
+          
+          
+          
+          <a href="/all/insights/" class="sb-link ">
+            <svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg><span>الرؤى والتوصيات</span>
+          </a>
+        
+      
+        
+          
+            <div class="sb-group">العمليات</div>
+            
+          
+          
+          
+          <a href="/all/orders/" class="sb-link ">
+            <svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1.2 12H6.2z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg><span>الطلبات</span>
+          </a>
+        
+      
+        
+          
+          
+          
+          <a href="/all/products/" class="sb-link ">
+            <svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.5"/></svg><span>المنتجات</span>
+          </a>
+        
+      
+        
+          
+          
+          
+          <a href="/all/inventory/" class="sb-link ">
+            <svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7.5 12 3l9 4.5-9 4.5z"/><path d="M3 7.5V16.5L12 21l9-4.5V7.5"/><path d="M12 12v9"/></svg><span>المخزون</span>
+          </a>
+        
+      
+        
+          
+          
+          
+          <a href="/all/customers/" class="sb-link ">
+            <svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7"/><path d="M18 14a6.5 6.5 0 0 1 3.5 6"/></svg><span>العملاء</span>
+          </a>
+        
+      
+        
+          
+            <div class="sb-group">التحليل والقرار</div>
+            
+          
+          
+          
+          <a href="/all/reports/month/2026-10/" class="sb-link active">
+            <svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10"/><path d="M10 20V4"/><path d="M16 20v-7"/><path d="M22 20H2"/></svg><span>التقارير</span>
+          </a>
+        
+      
+        
+          
+          
+          
+          <a href="/all/marketing/30/" class="sb-link ">
+            <svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11v2a1 1 0 0 0 1 1h3l6 4V6L7 10H4a1 1 0 0 0-1 1z"/><path d="M17 8a5 5 0 0 1 0 8"/><path d="M7 14v4"/></svg><span>التسويق</span>
+          </a>
+        
+      
+        
+          
+          
+          
+          <a href="/all/goals/" class="sb-link ">
+            <svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/></svg><span>الأهداف والتوقعات</span>
+          </a>
+        
+      
+        
+          
+          
+          
+          <a href="/all/simulator/" class="sb-link ">
+            <svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg><span>محاكي القرارات</span>
+          </a>
+        
+      
+        
+          
+            <div class="sb-group">الإدارة</div>
+            
+          
+          
+          
+          <a href="/all/settings/" class="sb-link ">
+            <svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span>الإعدادات</span>
+          </a>
+        
+      
+        
+      
+      
+    </nav>
+
+    <div class="sb-user">
+      <div class="avatar">ع</div>
+      <div class="sb-user-info">
+        <div class="sb-user-name">عرض تجريبي</div>
+        <div class="sb-user-role">مالك</div>
+      </div>
+      
+    </div>
+  </aside>
+  <div class="scrim" id="scrim"></div>
+
+  <div class="main">
+    <header class="topbar">
+      <button class="icon-btn only-mobile" id="menu-btn" aria-label="القائمة"><svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+
+      
+      <div class="store-switch" role="tablist" aria-label="اختيار المتجر">
+        
+          
+          <a role="tab" aria-selected="true"
+             class="store-pill active" data-key="all"
+             href="/all/reports/month/2026-10/">
+            <span class="pill-mark"><svg width="20" height="20" viewBox="0 0 40 40" aria-hidden="true">
+  <defs>
+    <linearGradient id="pm-g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#a497ff"/><stop offset="1" stop-color="#5b4cf0"/>
+    </linearGradient>
+  </defs>
+  <rect width="40" height="40" rx="11" fill="url(#pm-g)"/>
+  <path d="M12 27c0-8 6-14 16-15-1 10-7 16-15 16" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M13 27 21 19" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/>
+</svg></span>
+            <span>كل المتاجر</span>
+          </a>
+        
+          
+          <a role="tab" aria-selected="false"
+             class="store-pill " data-key="smooth"
+             href="/smooth/reports/month/2026-10/">
+            <img src="/static/brands/smooth-logo.webp" alt="">
+            <span>سموذ</span>
+          </a>
+        
+          
+          <a role="tab" aria-selected="false"
+             class="store-pill " data-key="glorias"
+             href="/glorias/reports/month/2026-10/">
+            <img src="/static/brands/glorias-logo.webp" alt="">
+            <span>قلوريز</span>
+          </a>
+        
+      </div>
+      
+
+      <div class="topbar-end">
+        <label class="search" id="search-wrap" hidden>
+          <svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input type="search" id="search" placeholder="ابحث..." autocomplete="off">
+        </label>
+        
+        <div class="bell-wrap">
+          <button class="icon-btn bell" id="bell-btn" aria-label="التنبيهات" aria-expanded="false" aria-controls="bell-panel">
+            <svg class="ic" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>
+            <span class="bell-count">10</span>
+          </button>
+          <div class="bell-panel" id="bell-panel" hidden>
+            <div class="bell-head"><strong>التنبيهات</strong><span class="muted small">10 تنبيه</span></div>
+            <ul>
+              
+              <li class="tone-danger">
+                <span class="dot danger"></span>
+                <div><div class="feed-title">«ماسك طين للبشرة الدهنية» نافد وعليه طلب</div><div class="muted small">المخزون</div></div>
+              </li>
+              
+              <li class="tone-danger">
+                <span class="dot danger"></span>
+                <div><div class="feed-title">«رموش طبيعية ناعمة» نافد وعليه طلب</div><div class="muted small">المخزون</div></div>
+              </li>
+              
+              <li class="tone-danger">
+                <span class="dot danger"></span>
+                <div><div class="feed-title">2 طلب متأخر في التجهيز</div><div class="muted small">العمليات</div></div>
+              </li>
+              
+              <li class="tone-warn">
+                <span class="dot warn"></span>
+                <div><div class="feed-title">متوقع نوصل 91% من هدف أكتوبر 2026</div><div class="muted small">الأهداف</div></div>
+              </li>
+              
+              <li class="tone-warn">
+                <span class="dot warn"></span>
+                <div><div class="feed-title">قناة مؤثرين بتخسر بعد مصروف الإعلان</div><div class="muted small">التسويق</div></div>
+              </li>
+              
+              <li class="tone-warn">
+                <span class="dot warn"></span>
+                <div><div class="feed-title">إلغاء الدفع عند الاستلام 14%</div><div class="muted small">العمليات</div></div>
+              </li>
+              
+            </ul>
+            <a class="bell-all" href="/all/insights/">كل الرؤى والتوصيات <svg class="ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="m11 18-6-6 6-6"/></svg></a>
+          </div>
+        </div>
+        
+        <button class="icon-btn" id="theme-btn" aria-label="تبديل الوضع الليلي" title="الوضع الليلي">
+          <span class="when-light"><svg class="ic" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></span><span class="when-dark"><svg class="ic" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span>
+        </button>
+      </div>
+    </header>
+
+    
+    <div class="demo-strip">نسخة عرض ببيانات تجريبية · الحفظ والتصدير الفعلي وربط سلة في النسخة الكاملة</div>
+    
+    <main class="content">
+      
+        
+      
+      
+<div class="page-head">
+  <div>
+    <h1>التقارير الأسبوعية</h1>
+    <p class="muted">
+      17 مايو – 23 مايو 2026 · كل المتاجر
+      
+    </p>
+  </div>
+  <span class="demo-badge">بيانات تجريبية للعرض</span>
+</div>
+
+<form class="filter-row report-filters" method="get" action="/all/reports/month/2026-10/" id="report-form">
+  <div class="filter-group">
+    <div class="segmented" role="radiogroup" aria-label="نوع التقرير">
+      
+        <a role="radio" aria-checked="true" class="seg-link active"
+           href="/all/reports/week/2026-10-04/">أسبوعي</a>
+      
+        <a role="radio" aria-checked="false" class="seg-link "
+           href="/all/reports/month/2026-10/">شهري</a>
+      
+    </div>
+    <input type="hidden" name="kind" value="week">
+    <label class="select-wrap">
+      <span class="sr-only">اختر الفترة</span>
+      <svg class="ic" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+      <select name="period" id="period-select">
+        
+          <option value="2026-10-04" >4 أكتوبر – 10 أكتوبر 2026</option>
+        
+          <option value="2026-09-27" >27 سبتمبر – 3 أكتوبر 2026</option>
+        
+          <option value="2026-09-20" >20 سبتمبر – 26 سبتمبر 2026</option>
+        
+          <option value="2026-09-13" >13 سبتمبر – 19 سبتمبر 2026</option>
+        
+          <option value="2026-09-06" >6 سبتمبر – 12 سبتمبر 2026</option>
+        
+          <option value="2026-08-30" >30 أغسطس – 5 سبتمبر 2026</option>
+        
+          <option value="2026-08-23" >23 أغسطس – 29 أغسطس 2026</option>
+        
+          <option value="2026-08-16" >16 أغسطس – 22 أغسطس 2026</option>
+        
+          <option value="2026-08-09" >9 أغسطس – 15 أغسطس 2026</option>
+        
+          <option value="2026-08-02" >2 أغسطس – 8 أغسطس 2026</option>
+        
+          <option value="2026-07-26" >26 يوليو – 1 أغسطس 2026</option>
+        
+          <option value="2026-07-19" >19 يوليو – 25 يوليو 2026</option>
+        
+          <option value="2026-07-12" >12 يوليو – 18 يوليو 2026</option>
+        
+          <option value="2026-07-05" >5 يوليو – 11 يوليو 2026</option>
+        
+          <option value="2026-06-28" >28 يونيو – 4 يوليو 2026</option>
+        
+          <option value="2026-06-21" >21 يونيو – 27 يونيو 2026</option>
+        
+          <option value="2026-06-14" >14 يونيو – 20 يونيو 2026</option>
+        
+          <option value="2026-06-07" >7 يونيو – 13 يونيو 2026</option>
+        
+          <option value="2026-05-31" >31 مايو – 6 يونيو 2026</option>
+        
+          <option value="2026-05-24" >24 مايو – 30 مايو 2026</option>
+        
+          <option value="2026-05-17" selected>17 مايو – 23 مايو 2026</option>
+        
+          <option value="2026-05-10" >10 مايو – 16 مايو 2026</option>
+        
+          <option value="2026-05-03" >3 مايو – 9 مايو 2026</option>
+        
+          <option value="2026-04-26" >26 أبريل – 2 مايو 2026</option>
+        
+          <option value="2026-04-19" >19 أبريل – 25 أبريل 2026</option>
+        
+          <option value="2026-04-12" >12 أبريل – 18 أبريل 2026</option>
+        
+      </select>
+    </label>
+  </div>
+  <div class="export-group">
+    <a class="btn" href="/all/exports/report-week-2026-05-17.xlsx"><svg class="ic" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11"/><path d="m7 10 5 5 5-5"/><path d="M5 20h14"/></svg> Excel</a>
+    <a class="btn" href="/all/exports/report-week-2026-05-17.csv"><svg class="ic" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11"/><path d="m7 10 5 5 5-5"/><path d="M5 20h14"/></svg> CSV</a>
+    <button class="btn" type="button" id="print-btn"><svg class="ic" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 9V3h10v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M7 14h10v7H7z"/></svg> طباعة / PDF</button>
+  </div>
+</form>
+
+<div class="print-head">
+  <strong>Growmatic — تقرير أسبوعي</strong>
+  <span>17 مايو – 23 مايو 2026 · كل المتاجر · بيانات تجريبية</span>
+</div>
+
+<section class="kpis">
+  <article class="kpi plain">
+    <div class="kpi-top"><span class="kpi-icon"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10"/><path d="M10 20V4"/><path d="M16 20v-7"/><path d="M22 20H2"/></svg></span><span class="kpi-label">إجمالي المبيعات</span></div>
+    <div class="kpi-value">40,971 <small>ر.س</small></div>
+    <div class="kpi-foot">
+    
+    <span class="delta up">▲ 16.2%</span><span class="muted small">شامل الضريبة والشحن</span></div>
+  </article>
+  <article class="kpi plain">
+    <div class="kpi-top"><span class="kpi-icon"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/><circle cx="12" cy="12" r="2"/></svg></span><span class="kpi-label">صافي الربح التقديري</span></div>
+    <div class="kpi-value">19,140 <small>ر.س</small></div>
+    <div class="kpi-foot">
+    
+    <span class="delta up">▲ 16.7%</span><span class="muted small">هامش 53.7%</span></div>
+  </article>
+  <article class="kpi plain">
+    <div class="kpi-top"><span class="kpi-icon"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3h14v18l-3-2-2 2-2-2-2 2-2-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg></span><span class="kpi-label">ضريبة القيمة المضافة</span></div>
+    <div class="kpi-value">5,344 <small>ر.س</small></div>
+    <div class="kpi-foot"><span class="muted small">15% مستحقة لهيئة الزكاة</span></div>
+  </article>
+  <article class="kpi plain">
+    <div class="kpi-top"><span class="kpi-icon"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1.2 12H6.2z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg></span><span class="kpi-label">عدد الطلبات</span></div>
+    <div class="kpi-value">211</div>
+    <div class="kpi-foot">
+    
+    <span class="delta up">▲ 8.8%</span><span class="muted small">7 ملغي</span></div>
+  </article>
+</section>
+
+<section class="metric-grid">
+  <div class="metric"><span class="muted small">صافي الإيرادات بدون ضريبة</span><strong class="num">35,627 <small>ر.س</small></strong>
+    
+    <span class="delta up">▲ 16.2%</span></div>
+  <div class="metric"><span class="muted small">متوسط قيمة الطلب</span><strong class="num">194 <small>ر.س</small></strong>
+    
+    <span class="delta up">▲ 6.9%</span></div>
+  <div class="metric"><span class="muted small">صافي الشحن</span><strong class="num"><bdi dir="ltr" class="neg">−1,084</bdi> <small>ر.س</small></strong><span class="muted small">70 طلب بشحن مجاني</span></div>
+  <div class="metric"><span class="muted small">الخصومات الممنوحة</span><strong class="num">1,448 <small>ر.س</small></strong><span class="muted small">3.7% من المبيعات</span></div>
+  <div class="metric"><span class="muted small">رسوم بوابات الدفع</span><strong class="num">1,112 <small>ر.س</small></strong><span class="muted small">2.7% من الإجمالي</span></div>
+  <div class="metric"><span class="muted small">نسبة الإلغاء</span><strong class="num">3.2%</strong><span class="muted small">7 من 218 طلب</span></div>
+  <div class="metric"><span class="muted small">العملاء</span><strong class="num">196</strong><span class="muted small">134 جديد · 62 عائد</span></div>
+  <div class="metric"><span class="muted small">القطع المباعة</span><strong class="num">453</strong><span class="muted small">2.15 قطعة لكل طلب</span></div>
+</section>
+
+<div class="grid-main">
+  <section class="card">
+    <div class="card-head">
+      <div>
+        <h2>المبيعات حسب الأسبوع</h2>
+        <p class="muted small">شامل الضريبة · الفترة المختارة مميّزة</p>
+      </div>
+      <div class="card-tools">
+        <div class="legend" id="trend-legend"></div>
+        <button class="text-btn no-print" id="trend-table-toggle" aria-pressed="false">عرض كجدول</button>
+      </div>
+    </div>
+    <div class="chart" id="trend-chart"></div>
+    <div class="chart-table" id="trend-table" hidden></div>
+  </section>
+
+  <section class="card">
+    <div class="card-head">
+      <div>
+        <h2>قائمة الدخل</h2>
+        <p class="muted small">من إجمالي المبيعات لصافي الربح</p>
+      </div>
+    </div>
+    <ul class="statement">
+      
+        <li class="st-total">
+          <span>إجمالي المبيعات (شامل الضريبة والشحن)</span>
+          <strong class="num"><bdi dir="ltr">40,971</bdi></strong>
+        </li>
+      
+        <li class="st-minus">
+          <span>ضريبة القيمة المضافة 15%</span>
+          <strong class="num"><bdi dir="ltr" class="neg">−5,344</bdi></strong>
+        </li>
+      
+        <li class="st-subtotal">
+          <span>صافي الإيرادات بدون ضريبة</span>
+          <strong class="num"><bdi dir="ltr">35,627</bdi></strong>
+        </li>
+      
+        <li class="st-detail">
+          <span>منها مبيعات المنتجات</span>
+          <strong class="num"><bdi dir="ltr">32,953</bdi></strong>
+        </li>
+      
+        <li class="st-detail">
+          <span>منها إيراد الشحن</span>
+          <strong class="num"><bdi dir="ltr">2,674</bdi></strong>
+        </li>
+      
+        <li class="st-minus">
+          <span>تكلفة البضاعة المباعة</span>
+          <strong class="num"><bdi dir="ltr" class="neg">−11,617</bdi></strong>
+        </li>
+      
+        <li class="st-minus">
+          <span>تكلفة شركات الشحن</span>
+          <strong class="num"><bdi dir="ltr" class="neg">−3,758</bdi></strong>
+        </li>
+      
+        <li class="st-minus">
+          <span>رسوم بوابات الدفع</span>
+          <strong class="num"><bdi dir="ltr" class="neg">−1,112</bdi></strong>
+        </li>
+      
+        <li class="st-result">
+          <span>صافي الربح التقديري</span>
+          <strong class="num"><bdi dir="ltr">19,140</bdi></strong>
+        </li>
+      
+    </ul>
+  </section>
+</div>
+
+<div class="grid-2">
+  <section class="card">
+    <div class="card-head">
+      <div><h2>تفاصيل الضريبة</h2><p class="muted small">ضريبة القيمة المضافة على المبيعات والشحن</p></div>
+      <span class="kpi-icon"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3h14v18l-3-2-2 2-2-2-2 2-2-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg></span>
+    </div>
+    <dl class="facts">
+      <div><dt>المبيعات الخاضعة للضريبة (شامل)</dt><dd class="num">40,971.00</dd></div>
+      <div><dt>القيمة قبل الضريبة</dt><dd class="num">35,626.96</dd></div>
+      <div><dt>ضريبة على المنتجات</dt><dd class="num">4,942.96</dd></div>
+      <div><dt>ضريبة على الشحن</dt><dd class="num">401.09</dd></div>
+      <div class="hl"><dt>إجمالي الضريبة المستحقة</dt><dd class="num">5,344.04 ر.س</dd></div>
+    </dl>
+  </section>
+
+  <section class="card">
+    <div class="card-head">
+      <div><h2>تفاصيل الشحن</h2><p class="muted small">المحصّل من العملاء مقابل تكلفة شركات الشحن</p></div>
+      <span class="kpi-icon"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 6h11v10H2z"/><path d="M13 9h5l4 4v3h-9"/><circle cx="6.5" cy="17.5" r="1.8"/><circle cx="17.5" cy="17.5" r="1.8"/></svg></span>
+    </div>
+    <dl class="facts">
+      <div><dt>الشحن المحصّل (شامل الضريبة)</dt><dd class="num">3,075.00</dd></div>
+      <div><dt>إيراد الشحن بدون ضريبة</dt><dd class="num">2,673.91</dd></div>
+      <div><dt>تكلفة شركات الشحن</dt><dd class="num"><bdi dir="ltr" class="neg">−3,757.67</bdi></dd></div>
+      <div><dt>متوسط تكلفة الشحن للطلب</dt><dd class="num">17.81</dd></div>
+      <div class="hl"><dt>صافي الشحن</dt><dd class="num"><bdi dir="ltr" class="neg">−1,083.76</bdi> ر.س</dd></div>
+    </dl>
+  </section>
+</div>
+
+<section class="card flush">
+  <div class="card-head padded">
+    <div><h2>أداء المنتجات</h2><p class="muted small">مرتّبة حسب المبيعات · الربح بعد تكلفة البضاعة وبدون ضريبة</p></div>
+  </div>
+  <table class="data-table">
+    <thead>
+      <tr><th>المنتج</th><th>المتجر</th><th class="end">القطع</th><th class="end">الطلبات</th><th class="end">المبيعات</th><th class="end">مجمل الربح</th><th>الهامش</th></tr>
+    </thead>
+    <tbody>
+      
+      <tr>
+        <td><strong>سيروم فيتامين C</strong></td>
+        <td><span class="store-tag smooth">سموذ</span></td>
+        <td class="end num">36</td>
+        <td class="end num">25</td>
+        <td class="end num">6,804 <small class="muted">ر.س</small></td>
+        <td class="end num"><bdi dir="ltr">3,685</bdi> <small class="muted">ر.س</small></td>
+        <td class="meter-cell">
+          <div class="meter-inline"><div class="meter thin"><span class="brand" style="--w: 62.3%"></span></div><span class="num small">62%</span></div>
+        </td>
+      </tr>
+      
+      <tr>
+        <td><strong>كريم ترطيب يومي</strong></td>
+        <td><span class="store-tag smooth">سموذ</span></td>
+        <td class="end num">43</td>
+        <td class="end num">28</td>
+        <td class="end num">6,235 <small class="muted">ر.س</small></td>
+        <td class="end num"><bdi dir="ltr">3,358</bdi> <small class="muted">ر.س</small></td>
+        <td class="meter-cell">
+          <div class="meter-inline"><div class="meter thin"><span class="brand" style="--w: 61.9%"></span></div><span class="num small">62%</span></div>
+        </td>
+      </tr>
+      
+      <tr>
+        <td><strong>طقم رموش مجموعة الصيف</strong></td>
+        <td><span class="store-tag glorias">قلوريز</span></td>
+        <td class="end num">40</td>
+        <td class="end num">28</td>
+        <td class="end num">4,800 <small class="muted">ر.س</small></td>
+        <td class="end num"><bdi dir="ltr">2,814</bdi> <small class="muted">ر.س</small></td>
+        <td class="meter-cell">
+          <div class="meter-inline"><div class="meter thin"><span class="brand" style="--w: 67.4%"></span></div><span class="num small">67%</span></div>
+        </td>
+      </tr>
+      
+      <tr>
+        <td><strong>تونر الورد</strong></td>
+        <td><span class="store-tag smooth">سموذ</span></td>
+        <td class="end num">41</td>
+        <td class="end num">28</td>
+        <td class="end num">3,485 <small class="muted">ر.س</small></td>
+        <td class="end num"><bdi dir="ltr">1,964</bdi> <small class="muted">ر.س</small></td>
+        <td class="meter-cell">
+          <div class="meter-inline"><div class="meter thin"><span class="brand" style="--w: 64.8%"></span></div><span class="num small">65%</span></div>
+        </td>
+      </tr>
+      
+      <tr>
+        <td><strong>غسول لطيف يومي</strong></td>
+        <td><span class="store-tag smooth">سموذ</span></td>
+        <td class="end num">33</td>
+        <td class="end num">22</td>
+        <td class="end num">3,135 <small class="muted">ر.س</small></td>
+        <td class="end num"><bdi dir="ltr">1,736</bdi> <small class="muted">ر.س</small></td>
+        <td class="meter-cell">
+          <div class="meter-inline"><div class="meter thin"><span class="brand" style="--w: 63.7%"></span></div><span class="num small">64%</span></div>
+        </td>
+      </tr>
+      
+      <tr>
+        <td><strong>واقي شمس SPF 50</strong></td>
+        <td><span class="store-tag smooth">سموذ</span></td>
+        <td class="end num">23</td>
+        <td class="end num">18</td>
+        <td class="end num">2,760 <small class="muted">ر.س</small></td>
+        <td class="end num"><bdi dir="ltr">1,457</bdi> <small class="muted">ر.س</small></td>
+        <td class="meter-cell">
+          <div class="meter-inline"><div class="meter thin"><span class="brand" style="--w: 60.7%"></span></div><span class="num small">61%</span></div>
+        </td>
+      </tr>
+      
+      <tr>
+        <td><strong>ماسك طين للبشرة الدهنية</strong></td>
+        <td><span class="store-tag smooth">سموذ</span></td>
+        <td class="end num">33</td>
+        <td class="end num">26</td>
+        <td class="end num">2,475 <small class="muted">ر.س</small></td>
+        <td class="end num"><bdi dir="ltr">1,426</bdi> <small class="muted">ر.س</small></td>
+        <td class="meter-cell">
+          <div class="meter-inline"><div class="meter thin"><span class="brand" style="--w: 66.3%"></span></div><span class="num small">66%</span></div>
+        </td>
+      </tr>
+      
+      <tr>
+        <td><strong>رموش صناعية كثيفة</strong></td>
+        <td><span class="store-tag glorias">قلوريز</span></td>
+        <td class="end num">41</td>
+        <td class="end num">30</td>
+        <td class="end num">2,419 <small class="muted">ر.س</small></td>
+        <td class="end num"><bdi dir="ltr">1,529</bdi> <small class="muted">ر.س</small></td>
+        <td class="meter-cell">
+          <div class="meter-inline"><div class="meter thin"><span class="brand" style="--w: 72.7%"></span></div><span class="num small">73%</span></div>
+        </td>
+      </tr>
+      
+      <tr>
+        <td><strong>غراء رموش شفاف</strong></td>
+        <td><span class="store-tag glorias">قلوريز</span></td>
+        <td class="end num">47</td>
+        <td class="end num">36</td>
+        <td class="end num">2,303 <small class="muted">ر.س</small></td>
+        <td class="end num"><bdi dir="ltr">1,486</bdi> <small class="muted">ر.س</small></td>
+        <td class="meter-cell">
+          <div class="meter-inline"><div class="meter thin"><span class="brand" style="--w: 74.2%"></span></div><span class="num small">74%</span></div>
+        </td>
+      </tr>
+      
+      <tr>
+        <td><strong>رموش طبيعية ناعمة</strong></td>
+        <td><span class="store-tag glorias">قلوريز</span></td>
+        <td class="end num">37</td>
+        <td class="end num">25</td>
+        <td class="end num">2,035 <small class="muted">ر.س</small></td>
+        <td class="end num"><bdi dir="ltr">1,289</bdi> <small class="muted">ر.س</small></td>
+        <td class="meter-cell">
+          <div class="meter-inline"><div class="meter thin"><span class="brand" style="--w: 72.8%"></span></div><span class="num small">73%</span></div>
+        </td>
+      </tr>
+      
+      <tr>
+        <td><strong>مزيل غراء آمن</strong></td>
+        <td><span class="store-tag glorias">قلوريز</span></td>
+        <td class="end num">47</td>
+        <td class="end num">37</td>
+        <td class="end num">1,645 <small class="muted">ر.س</small></td>
+        <td class="end num"><bdi dir="ltr">1,054</bdi> <small class="muted">ر.س</small></td>
+        <td class="meter-cell">
+          <div class="meter-inline"><div class="meter thin"><span class="brand" style="--w: 73.7%"></span></div><span class="num small">74%</span></div>
+        </td>
+      </tr>
+      
+      <tr>
+        <td><strong>ملقط رموش ذهبي</strong></td>
+        <td><span class="store-tag glorias">قلوريز</span></td>
+        <td class="end num">32</td>
+        <td class="end num">28</td>
+        <td class="end num">1,248 <small class="muted">ر.س</small></td>
+        <td class="end num"><bdi dir="ltr">797</bdi> <small class="muted">ر.س</small></td>
+        <td class="meter-cell">
+          <div class="meter-inline"><div class="meter thin"><span class="brand" style="--w: 73.5%"></span></div><span class="num small">73%</span></div>
+        </td>
+      </tr>
+      
+    </tbody>
+  </table>
+</section>
+
+<div class="grid-2 spaced">
+  
+  <section class="card">
+    <div class="card-head"><h2>المبيعات حسب المدينة</h2><span class="kpi-icon"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="9" r="2.5"/></svg></span></div>
+    <ul class="share-list">
+      
+      <li>
+        <div class="share-head">
+          <span>الرياض</span>
+          <span class="num"><strong>14,104</strong> <small class="muted">ر.س · 80 طلب</small></span>
+        </div>
+        <div class="meter-inline"><div class="meter thin"><span class="brand" style="--w: 34.4%"></span></div><span class="num small muted">34%</span></div>
+      </li>
+      
+      <li>
+        <div class="share-head">
+          <span>جدة</span>
+          <span class="num"><strong>7,250</strong> <small class="muted">ر.س · 37 طلب</small></span>
+        </div>
+        <div class="meter-inline"><div class="meter thin"><span class="brand" style="--w: 17.7%"></span></div><span class="num small muted">18%</span></div>
+      </li>
+      
+      <li>
+        <div class="share-head">
+          <span>مكة</span>
+          <span class="num"><strong>5,176</strong> <small class="muted">ر.س · 21 طلب</small></span>
+        </div>
+        <div class="meter-inline"><div class="meter thin"><span class="brand" style="--w: 12.6%"></span></div><span class="num small muted">13%</span></div>
+      </li>
+      
+      <li>
+        <div class="share-head">
+          <span>الخبر</span>
+          <span class="num"><strong>3,444</strong> <small class="muted">ر.س · 16 طلب</small></span>
+        </div>
+        <div class="meter-inline"><div class="meter thin"><span class="brand" style="--w: 8.4%"></span></div><span class="num small muted">8%</span></div>
+      </li>
+      
+      <li>
+        <div class="share-head">
+          <span>أبها</span>
+          <span class="num"><strong>3,321</strong> <small class="muted">ر.س · 13 طلب</small></span>
+        </div>
+        <div class="meter-inline"><div class="meter thin"><span class="brand" style="--w: 8.1%"></span></div><span class="num small muted">8%</span></div>
+      </li>
+      
+      <li>
+        <div class="share-head">
+          <span>الدمام</span>
+          <span class="num"><strong>2,990</strong> <small class="muted">ر.س · 16 طلب</small></span>
+        </div>
+        <div class="meter-inline"><div class="meter thin"><span class="brand" style="--w: 7.3%"></span></div><span class="num small muted">7%</span></div>
+      </li>
+      
+      <li>
+        <div class="share-head">
+          <span>المدينة</span>
+          <span class="num"><strong>2,011</strong> <small class="muted">ر.س · 13 طلب</small></span>
+        </div>
+        <div class="meter-inline"><div class="meter thin"><span class="brand" style="--w: 4.9%"></span></div><span class="num small muted">5%</span></div>
+      </li>
+      
+      <li>
+        <div class="share-head">
+          <span>القصيم</span>
+          <span class="num"><strong>1,555</strong> <small class="muted">ر.س · 8 طلب</small></span>
+        </div>
+        <div class="meter-inline"><div class="meter thin"><span class="brand" style="--w: 3.8%"></span></div><span class="num small muted">4%</span></div>
+      </li>
+      
+    </ul>
+  </section>
+  
+  <section class="card">
+    <div class="card-head"><h2>طرق الدفع</h2><span class="kpi-icon"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></span></div>
+    <ul class="share-list">
+      
+      <li>
+        <div class="share-head">
+          <span>مدى</span>
+          <span class="num"><strong>15,012</strong> <small class="muted">ر.س · 83 طلب</small></span>
+        </div>
+        <div class="meter-inline"><div class="meter thin"><span class="brand" style="--w: 36.6%"></span></div><span class="num small muted">37%</span></div>
+      </li>
+      
+      <li>
+        <div class="share-head">
+          <span>فيزا</span>
+          <span class="num"><strong>8,640</strong> <small class="muted">ر.س · 37 طلب</small></span>
+        </div>
+        <div class="meter-inline"><div class="meter thin"><span class="brand" style="--w: 21.1%"></span></div><span class="num small muted">21%</span></div>
+      </li>
+      
+      <li>
+        <div class="share-head">
+          <span>Apple Pay</span>
+          <span class="num"><strong>7,992</strong> <small class="muted">ر.س · 43 طلب</small></span>
+        </div>
+        <div class="meter-inline"><div class="meter thin"><span class="brand" style="--w: 19.5%"></span></div><span class="num small muted">20%</span></div>
+      </li>
+      
+      <li>
+        <div class="share-head">
+          <span>تمارا</span>
+          <span class="num"><strong>5,511</strong> <small class="muted">ر.س · 29 طلب</small></span>
+        </div>
+        <div class="meter-inline"><div class="meter thin"><span class="brand" style="--w: 13.5%"></span></div><span class="num small muted">13%</span></div>
+      </li>
+      
+      <li>
+        <div class="share-head">
+          <span>الدفع عند الاستلام</span>
+          <span class="num"><strong>3,816</strong> <small class="muted">ر.س · 19 طلب</small></span>
+        </div>
+        <div class="meter-inline"><div class="meter thin"><span class="brand" style="--w: 9.3%"></span></div><span class="num small muted">9%</span></div>
+      </li>
+      
+    </ul>
+  </section>
+  
+  <section class="card">
+    <div class="card-head"><h2>قنوات البيع</h2><span class="kpi-icon"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11v2a1 1 0 0 0 1 1h3l6 4V6L7 10H4a1 1 0 0 0-1 1z"/><path d="M17 8a5 5 0 0 1 0 8"/><path d="M7 14v4"/></svg></span></div>
+    <ul class="share-list">
+      
+      <li>
+        <div class="share-head">
+          <span>سناب شات</span>
+          <span class="num"><strong>13,046</strong> <small class="muted">ر.س · 61 طلب</small></span>
+        </div>
+        <div class="meter-inline"><div class="meter thin"><span class="brand" style="--w: 31.8%"></span></div><span class="num small muted">32%</span></div>
+      </li>
+      
+      <li>
+        <div class="share-head">
+          <span>تيك توك</span>
+          <span class="num"><strong>9,315</strong> <small class="muted">ر.س · 45 طلب</small></span>
+        </div>
+        <div class="meter-inline"><div class="meter thin"><span class="brand" style="--w: 22.7%"></span></div><span class="num small muted">23%</span></div>
+      </li>
+      
+      <li>
+        <div class="share-head">
+          <span>انستقرام</span>
+          <span class="num"><strong>6,734</strong> <small class="muted">ر.س · 31 طلب</small></span>
+        </div>
+        <div class="meter-inline"><div class="meter thin"><span class="brand" style="--w: 16.4%"></span></div><span class="num small muted">16%</span></div>
+      </li>
+      
+      <li>
+        <div class="share-head">
+          <span>قوقل</span>
+          <span class="num"><strong>5,591</strong> <small class="muted">ر.س · 31 طلب</small></span>
+        </div>
+        <div class="meter-inline"><div class="meter thin"><span class="brand" style="--w: 13.6%"></span></div><span class="num small muted">14%</span></div>
+      </li>
+      
+      <li>
+        <div class="share-head">
+          <span>مباشر</span>
+          <span class="num"><strong>3,820</strong> <small class="muted">ر.س · 30 طلب</small></span>
+        </div>
+        <div class="meter-inline"><div class="meter thin"><span class="brand" style="--w: 9.3%"></span></div><span class="num small muted">9%</span></div>
+      </li>
+      
+      <li>
+        <div class="share-head">
+          <span>مؤثرين</span>
+          <span class="num"><strong>2,465</strong> <small class="muted">ر.س · 13 طلب</small></span>
+        </div>
+        <div class="meter-inline"><div class="meter thin"><span class="brand" style="--w: 6.0%"></span></div><span class="num small muted">6%</span></div>
+      </li>
+      
+    </ul>
+  </section>
+  
+  <section class="card">
+    <div class="card-head"><h2>توزيع المتاجر</h2><span class="kpi-icon"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7.5 12 3l9 4.5-9 4.5z"/><path d="M3 7.5V16.5L12 21l9-4.5V7.5"/><path d="M12 12v9"/></svg></span></div>
+    <ul class="share-list">
+      
+      <li>
+        <div class="share-head">
+          <span>سموذ</span>
+          <span class="num"><strong>25,449</strong> <small class="muted">ر.س · 92 طلب</small></span>
+        </div>
+        <div class="meter-inline"><div class="meter thin"><span class="brand" style="--w: 62.1%"></span></div><span class="num small muted">62%</span></div>
+      </li>
+      
+      <li>
+        <div class="share-head">
+          <span>قلوريز</span>
+          <span class="num"><strong>15,522</strong> <small class="muted">ر.س · 119 طلب</small></span>
+        </div>
+        <div class="meter-inline"><div class="meter thin"><span class="brand" style="--w: 37.9%"></span></div><span class="num small muted">38%</span></div>
+      </li>
+      
+    </ul>
+  </section>
+  
+</div>
+
+<section class="card flush">
+  <div class="card-head padded"><div><h2>شركات الشحن</h2><p class="muted small">متأخر = التوصيل أكتر من 4 أيام</p></div><span class="kpi-icon"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 6h11v10H2z"/><path d="M13 9h5l4 4v3h-9"/><circle cx="6.5" cy="17.5" r="1.8"/><circle cx="17.5" cy="17.5" r="1.8"/></svg></span></div>
+  <table class="data-table">
+    <thead><tr><th>الشركة</th><th class="end">الطلبات</th><th class="end">متوسط التكلفة</th><th class="end">متوسط التوصيل</th><th>نسبة التأخير</th></tr></thead>
+    <tbody>
+      
+      <tr>
+        <td><strong>سمسا</strong></td>
+        <td class="end num">88</td>
+        <td class="end num">19.0 <small class="muted">ر.س</small></td>
+        <td class="end num">2.3 <small class="muted">يوم</small></td>
+        <td class="meter-cell"><div class="meter-inline"><div class="meter thin"><span class="ok" style="--w: 0.0%"></span></div><span class="num small">0%</span></div></td>
+      </tr>
+      
+      <tr>
+        <td><strong>سبل</strong></td>
+        <td class="end num">48</td>
+        <td class="end num">16.1 <small class="muted">ر.س</small></td>
+        <td class="end num">5.1 <small class="muted">يوم</small></td>
+        <td class="meter-cell"><div class="meter-inline"><div class="meter thin"><span class="danger" style="--w: 62.5%"></span></div><span class="num small">62%</span></div></td>
+      </tr>
+      
+      <tr>
+        <td><strong>ريدبوكس</strong></td>
+        <td class="end num">38</td>
+        <td class="end num">15.1 <small class="muted">ر.س</small></td>
+        <td class="end num">2.5 <small class="muted">يوم</small></td>
+        <td class="meter-cell"><div class="meter-inline"><div class="meter thin"><span class="ok" style="--w: 0.0%"></span></div><span class="num small">0%</span></div></td>
+      </tr>
+      
+      <tr>
+        <td><strong>أرامكس</strong></td>
+        <td class="end num">37</td>
+        <td class="end num">19.9 <small class="muted">ر.س</small></td>
+        <td class="end num">3.5 <small class="muted">يوم</small></td>
+        <td class="meter-cell"><div class="meter-inline"><div class="meter thin"><span class="danger" style="--w: 27.0%"></span></div><span class="num small">27%</span></div></td>
+      </tr>
+      
+    </tbody>
+  </table>
+</section>
+
+<p class="muted small assumptions">
+  <svg class="ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 2 20h20z"/><path d="M12 10v4"/><path d="M12 17h.01"/></svg>
+  الحسابات مبنية على افتراضات: أسعار شاملة ضريبة 15%، وتكلفة شحن ورسوم دفع تقديرية.
+  <a class="link" href="/all/settings/">راجع الافتراضات</a>
+</p>
+
+<script type="application/json" id="trend-data">{"current": "2026-05-17", "stores": [{"color": {"dark": "#f0697a", "light": "#b52a36"}, "key": "smooth", "name": "\u0633\u0645\u0648\u0630"}, {"color": {"dark": "#c9662f", "light": "#f0a066"}, "key": "glorias", "name": "\u0642\u0644\u0648\u0631\u064a\u0632"}], "trend": [{"full": "19 \u064a\u0648\u0644\u064a\u0648 \u2013 25 \u064a\u0648\u0644\u064a\u0648 2026", "glorias": 19044, "glorias_net": 16560, "glorias_orders": 137, "glorias_profit": 8970, "key": "2026-07-19", "label": "19 \u064a\u0648\u0644\u064a\u0648", "partial": false, "smooth": 28366, "smooth_net": 24666, "smooth_orders": 111, "smooth_profit": 13089}, {"full": "26 \u064a\u0648\u0644\u064a\u0648 \u2013 1 \u0623\u063a\u0633\u0637\u0633 2026", "glorias": 20907, "glorias_net": 18180, "glorias_orders": 145, "glorias_profit": 10035, "key": "2026-07-26", "label": "26 \u064a\u0648\u0644\u064a\u0648", "partial": false, "smooth": 26064, "smooth_net": 22664, "smooth_orders": 98, "smooth_profit": 11758}, {"full": "2 \u0623\u063a\u0633\u0637\u0633 \u2013 8 \u0623\u063a\u0633\u0637\u0633 2026", "glorias": 18998, "glorias_net": 16520, "glorias_orders": 133, "glorias_profit": 9212, "key": "2026-08-02", "label": "2 \u0623\u063a\u0633\u0637\u0633", "partial": false, "smooth": 25809, "smooth_net": 22443, "smooth_orders": 101, "smooth_profit": 11983}, {"full": "9 \u0623\u063a\u0633\u0637\u0633 \u2013 15 \u0623\u063a\u0633\u0637\u0633 2026", "glorias": 18663, "glorias_net": 16229, "glorias_orders": 137, "glorias_profit": 8950, "key": "2026-08-09", "label": "9 \u0623\u063a\u0633\u0637\u0633", "partial": false, "smooth": 25564, "smooth_net": 22230, "smooth_orders": 99, "smooth_profit": 11870}, {"full": "16 \u0623\u063a\u0633\u0637\u0633 \u2013 22 \u0623\u063a\u0633\u0637\u0633 2026", "glorias": 18521, "glorias_net": 16105, "glorias_orders": 133, "glorias_profit": 8874, "key": "2026-08-16", "label": "16 \u0623\u063a\u0633\u0637\u0633", "partial": false, "smooth": 27008, "smooth_net": 23485, "smooth_orders": 101, "smooth_profit": 12298}, {"full": "23 \u0623\u063a\u0633\u0637\u0633 \u2013 29 \u0623\u063a\u0633\u0637\u0633 2026", "glorias": 19754, "glorias_net": 17177, "glorias_orders": 143, "glorias_profit": 9487, "key": "2026-08-23", "label": "23 \u0623\u063a\u0633\u0637\u0633", "partial": false, "smooth": 28307, "smooth_net": 24615, "smooth_orders": 110, "smooth_profit": 13108}, {"full": "30 \u0623\u063a\u0633\u0637\u0633 \u2013 5 \u0633\u0628\u062a\u0645\u0628\u0631 2026", "glorias": 21127, "glorias_net": 18371, "glorias_orders": 137, "glorias_profit": 10201, "key": "2026-08-30", "label": "30 \u0623\u063a\u0633\u0637\u0633", "partial": false, "smooth": 28183, "smooth_net": 24507, "smooth_orders": 100, "smooth_profit": 12832}, {"full": "6 \u0633\u0628\u062a\u0645\u0628\u0631 \u2013 12 \u0633\u0628\u062a\u0645\u0628\u0631 2026", "glorias": 17972, "glorias_net": 15628, "glorias_orders": 140, "glorias_profit": 8515, "key": "2026-09-06", "label": "6 \u0633\u0628\u062a\u0645\u0628\u0631", "partial": false, "smooth": 27093, "smooth_net": 23559, "smooth_orders": 111, "smooth_profit": 12375}, {"full": "13 \u0633\u0628\u062a\u0645\u0628\u0631 \u2013 19 \u0633\u0628\u062a\u0645\u0628\u0631 2026", "glorias": 20924, "glorias_net": 18195, "glorias_orders": 148, "glorias_profit": 9945, "key": "2026-09-13", "label": "13 \u0633\u0628\u062a\u0645\u0628\u0631", "partial": false, "smooth": 32932, "smooth_net": 28637, "smooth_orders": 120, "smooth_profit": 15358}, {"full": "20 \u0633\u0628\u062a\u0645\u0628\u0631 \u2013 26 \u0633\u0628\u062a\u0645\u0628\u0631 2026", "glorias": 20699, "glorias_net": 17999, "glorias_orders": 145, "glorias_profit": 9947, "key": "2026-09-20", "label": "20 \u0633\u0628\u062a\u0645\u0628\u0631", "partial": false, "smooth": 29379, "smooth_net": 25547, "smooth_orders": 115, "smooth_profit": 13442}, {"full": "27 \u0633\u0628\u062a\u0645\u0628\u0631 \u2013 3 \u0623\u0643\u062a\u0648\u0628\u0631 2026", "glorias": 16425, "glorias_net": 14283, "glorias_orders": 130, "glorias_profit": 7683, "key": "2026-09-27", "label": "27 \u0633\u0628\u062a\u0645\u0628\u0631", "partial": false, "smooth": 29964, "smooth_net": 26056, "smooth_orders": 114, "smooth_profit": 13651}, {"full": "4 \u0623\u0643\u062a\u0648\u0628\u0631 \u2013 10 \u0623\u0643\u062a\u0648\u0628\u0631 2026", "glorias": 16889, "glorias_net": 14686, "glorias_orders": 134, "glorias_profit": 7893, "key": "2026-10-04", "label": "4 \u0623\u0643\u062a\u0648\u0628\u0631", "partial": false, "smooth": 32694, "smooth_net": 28430, "smooth_orders": 129, "smooth_profit": 14918}]}</script>
+
+    </main>
+  </div>
+</div>
+
+<div class="toast-stack" id="toasts" aria-live="polite"></div>
+
+<script src="/static/app.js?v=10"></script>
+
+
+</body>
+</html>
