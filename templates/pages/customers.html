@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>تحليل العملاء</h1>
+    <p class="muted">{{ total_customers|money }} عميل · {{ brand.name if store != 'all' else 'كل المتاجر' }}</p>
+  </div>
+  <div class="head-actions">
+    <span class="demo-badge">بيانات تجريبية للعرض</span>
+    <a class="btn" href="{{ url_for('customers_export') }}">{{ icon('download', 17) }} تصدير كل العملاء</a>
+  </div>
+</div>
+
+<section class="metric-grid four">
+  <div class="metric"><span class="muted small">نسبة العملاء المتكررين</span><strong class="num">{{ stats.repeat_rate|pct }}</strong><span class="muted small">اشتروا أكتر من مرة</span></div>
+  <div class="metric"><span class="muted small">متوسط المدة بين الطلبات</span><strong class="num">{{ stats.avg_gap|round|int }} <small>يوم</small></strong><span class="muted small">للعملاء المتكررين</span></div>
+  <div class="metric"><span class="muted small">قيمة العميل (CLV)</span><strong class="num">{{ stats.clv|money }} <small>ر.س</small></strong><span class="muted small">متوسط الإنفاق لكل عميل</span></div>
+  <div class="metric"><span class="muted small">ربح العميل</span><strong class="num">{{ stats.clv_profit|money }} <small>ر.س</small></strong><span class="muted small">أقصى تكلفة معقولة لجلب عميل</span></div>
+</section>
+
+<h2 class="section-title">شرائح العملاء</h2>
+<p class="muted small section-sub">التقسيم حسب آخر طلب وعدد الطلبات وقيمة الإنفاق (RFM)، ومع كل شريحة الإجراء المقترح</p>
+<section class="segments">
+  {% for sg in segments %}
+  <article class="segment tone-{{ sg.tone }}">
+    <div class="segment-head">
+      <span class="badge {{ sg.tone }}">{{ sg.label }}</span>
+      <span class="muted small">{{ sg.pct|round|int }}% من العملاء</span>
+    </div>
+    <div class="segment-value"><span class="num">{{ sg.count|money }}</span> <small>عميل</small></div>
+    <div class="meter-inline"><div class="meter thin"><span class="brand" style="--w: {{ sg.share|round(1) }}%"></span></div><span class="num small muted">{{ sg.share|round|int }}% من الإيراد</span></div>
+    <p class="segment-action">{{ sg.action }}</p>
+    {% if sg.count %}
+    <a class="link small" href="{{ url_for('customers_export', segment=sg.key) }}">{{ icon('download', 14) }} تصدير القائمة للحملة</a>
+    {% endif %}
+  </article>
+  {% endfor %}
+</section>
+
+<section class="card spaced">
+  <div class="card-head">
+    <div>
+      <h2>رجوع العملاء شهر بشهر</h2>
+      <p class="muted small">من كل 100 عميل اشتروا أول مرة في شهر، كام واحد رجع اشترى في الشهور اللي بعده. كل ما اللون أغمق، الرجوع أعلى.</p>
+    </div>
+  </div>
+  <div class="table-scroll">
+    <table class="cohort">
+      <thead>
+        <tr><th>شهر أول طلب</th><th class="end">العملاء</th>{% for i in range(1, 6) %}<th class="center">بعد {{ i }} {{ 'شهر' if i == 1 else 'شهور' }}</th>{% endfor %}</tr>
+      </thead>
+      <tbody>
+        {% for row in cohorts %}
+        <tr>
+          <td><strong>{{ row.label }}</strong></td>
+          <td class="end num">{{ row.size|money }}</td>
+          {% for v in row.cells %}
+            {% if v is none %}
+              <td class="cell empty"></td>
+            {% else %}
+              <td class="cell {{ 'strong' if v >= 14 }}" style="--v: {{ [v * 4, 100]|min|round(1) }}%" title="{{ row.label }} · بعد {{ loop.index }} شهر: {{ v|round(1) }}%"><span class="num">{{ v|round(1) }}%</span></td>
+            {% endif %}
+          {% endfor %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<div class="grid-2">
+  <section class="card flush">
+    <div class="card-head padded"><div><h2>أفضل 10 عملاء</h2><p class="muted small">حسب إجمالي الإنفاق</p></div><span class="kpi-icon">{{ icon('crown', 18) }}</span></div>
+    <table class="data-table">
+      <thead><tr><th>العميل</th><th class="end">الطلبات</th><th class="end">الإنفاق</th><th>آخر طلب</th></tr></thead>
+      <tbody>
+        {% for c in top %}
+        <tr>
+          <td><div class="cell-user"><span class="mini-avatar store-{{ c.store }}">{{ c.name[:1] }}</span><div><div>{{ c.name }}</div><div class="muted small">{{ c.city }}</div></div></div></td>
+          <td class="end num">{{ c.orders }}</td>
+          <td class="end num"><strong>{{ c.spent|money }}</strong> <small class="muted">ر.س</small></td>
+          <td class="muted">من {{ c.recency }} يوم</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+
+  <section class="card flush">
+    <div class="card-head padded">
+      <div><h2>عملاء مهمين بطّلوا يشتروا</h2><p class="muted small">ابدأ بيهم حملة الاسترجاع</p></div>
+      {% if at_risk %}<a class="btn sm" href="{{ url_for('customers_export', segment='at_risk') }}">{{ icon('download', 15) }} تصدير</a>{% endif %}
+    </div>
+    <table class="data-table">
+      <thead><tr><th>العميل</th><th class="end">الطلبات</th><th class="end">الإنفاق</th><th>غايب من</th></tr></thead>
+      <tbody>
+        {% for c in at_risk %}
+        <tr>
+          <td><div class="cell-user"><span class="mini-avatar store-{{ c.store }}">{{ c.name[:1] }}</span><div><div>{{ c.name }}</div><div class="muted small">{{ c.city }}</div></div></div></td>
+          <td class="end num">{{ c.orders }}</td>
+          <td class="end num"><strong>{{ c.spent|money }}</strong> <small class="muted">ر.س</small></td>
+          <td><span class="badge warn">{{ c.recency }} يوم</span></td>
+        </tr>
+        {% else %}
+        <tr><td colspan="4" class="muted">مفيش عملاء في الشريحة دي.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+</div>
+{% endblock %}

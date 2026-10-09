@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=7">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=9">
   <style>
     :root {
       --fill: {{ brand.light.fill }}; --primary: {{ brand.light.primary }}; --strong: {{ brand.light.strong }};
@@ -105,6 +105,28 @@
           {{ icon('search', 18) }}
           <input type="search" id="search" placeholder="ابحث..." autocomplete="off">
         </label>
+        {% if can_page('insights') %}
+        <div class="bell-wrap">
+          <button class="icon-btn bell" id="bell-btn" aria-label="التنبيهات" aria-expanded="false" aria-controls="bell-panel">
+            {{ icon('bell', 19) }}
+            {% if alerts %}<span class="bell-count">{{ alerts|length }}</span>{% endif %}
+          </button>
+          <div class="bell-panel" id="bell-panel" hidden>
+            <div class="bell-head"><strong>التنبيهات</strong><span class="muted small">{{ alerts|length }} تنبيه</span></div>
+            <ul>
+              {% for a in alerts[:6] %}
+              <li class="tone-{{ 'danger' if a.severity == 'critical' else 'warn' }}">
+                <span class="dot {{ 'danger' if a.severity == 'critical' else 'warn' }}"></span>
+                <div><div class="feed-title">{{ a.title }}</div><div class="muted small">{{ a.area }}</div></div>
+              </li>
+              {% else %}
+              <li class="muted">مفيش تنبيهات دلوقتي.</li>
+              {% endfor %}
+            </ul>
+            <a class="bell-all" href="{{ url_for('page', key='insights') }}">كل الرؤى والتوصيات {{ icon('arrow', 14) }}</a>
+          </div>
+        </div>
+        {% endif %}
         <button class="icon-btn" id="theme-btn" aria-label="تبديل الوضع الليلي" title="الوضع الليلي">
           <span class="when-light">{{ icon('moon', 19) }}</span><span class="when-dark">{{ icon('sun', 19) }}</span>
         </button>
@@ -124,7 +146,7 @@
 
 <div class="toast-stack" id="toasts" aria-live="polite"></div>
 {% block overlay %}{% endblock %}
-<script src="{{ url_for('static', filename='app.js') }}?v=7"></script>
+<script src="{{ url_for('static', filename='app.js') }}?v=9"></script>
 {% block scripts %}{% endblock %}
 {% else %}
   {% block public %}{% endblock %}

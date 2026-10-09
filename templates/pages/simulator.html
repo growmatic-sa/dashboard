@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>محاكي القرارات</h1>
+    <p class="muted">جرّب القرار قبل ما تطبّقه: النتيجة محسوبة على طلبات آخر {{ sim.window }} يوم الفعلية</p>
+  </div>
+  <span class="demo-badge">بيانات تجريبية للعرض</span>
+</div>
+
+<div class="filter-row">
+  <div class="chips" id="sim-presets" aria-label="سيناريوهات جاهزة">
+    <button class="chip" data-preset="price5">رفع الأسعار 5%</button>
+    <button class="chip" data-preset="ship">رفع حد الشحن المجاني 50 ر.س</button>
+    <button class="chip" data-preset="nodisc">تقليل الخصومات للنص</button>
+    <button class="chip" data-preset="ads">زيادة الإعلانات 30%</button>
+    <button class="chip" data-preset="reset">{{ icon('x', 14) }} إرجاع الوضع الحالي</button>
+  </div>
+</div>
+
+<div class="sim">
+  <section class="card sim-controls">
+    <div class="card-head"><h2>القرارات</h2><span class="kpi-icon">{{ icon('sliders', 18) }}</span></div>
+
+    <div class="lever">
+      <div class="lever-head"><label for="lv-price">تغيير الأسعار</label><output id="out-price" class="num">0%</output></div>
+      <input type="range" id="lv-price" min="-20" max="20" step="1" value="0">
+      <div class="lever-scale"><span>−20%</span><span>0</span><span>+20%</span></div>
+    </div>
+
+    <div class="lever">
+      <div class="lever-head"><label for="lv-disc">حجم الخصومات والكوبونات</label><output id="out-disc" class="num">100%</output></div>
+      <input type="range" id="lv-disc" min="0" max="200" step="10" value="100">
+      <div class="lever-scale"><span>إلغاء</span><span>الحالي</span><span>الضعف</span></div>
+    </div>
+
+    <div class="lever">
+      <div class="lever-head"><label for="lv-ads">ميزانية الإعلانات</label><output id="out-ads" class="num">0%</output></div>
+      <input type="range" id="lv-ads" min="-50" max="50" step="5" value="0">
+      <div class="lever-scale"><span>−50%</span><span>الحالي</span><span>+50%</span></div>
+    </div>
+
+    {% for s in sim_stores %}
+    <div class="lever-group">
+      <div class="lever-group-title"><span class="store-tag {{ s }}">{{ store_names[s] }}</span> الشحن</div>
+      <div class="lever">
+        <div class="lever-head"><label for="lv-free-{{ s }}">الشحن مجاني فوق</label><output id="out-free-{{ s }}" class="num">{{ sim.free_over[s] }} ر.س</output></div>
+        <input type="range" id="lv-free-{{ s }}" data-store="{{ s }}" data-kind="free" min="0" max="500" step="10" value="{{ sim.free_over[s] }}">
+      </div>
+      <div class="lever">
+        <div class="lever-head"><label for="lv-fee-{{ s }}">رسوم الشحن للعميل</label><output id="out-fee-{{ s }}" class="num">{{ sim.fee[s] }} ر.س</output></div>
+        <input type="range" id="lv-fee-{{ s }}" data-store="{{ s }}" data-kind="fee" min="0" max="50" step="1" value="{{ sim.fee[s] }}">
+      </div>
+    </div>
+    {% endfor %}
+
+    <details class="advanced">
+      <summary>افتراضات متقدمة</summary>
+      <div class="lever">
+        <div class="lever-head"><label for="lv-elastic">حساسية العملاء للسعر</label><output id="out-elastic" class="num">{{ sim.elasticity }}</output></div>
+        <input type="range" id="lv-elastic" min="-2.5" max="-0.3" step="0.1" value="{{ sim.elasticity }}">
+        <p class="muted small">{{ sim.elasticity }} يعني رفع السعر 10% يقلل الطلبات حوالي {{ (sim.elasticity * -10)|round|int }}%.</p>
+      </div>
+    </details>
+  </section>
+
+  <section class="sim-results">
+    <div class="sim-hero card">
+      <span class="muted small">الربح الشهري بعد الإعلانات</span>
+      <div class="sim-big">
+        <strong class="num"><bdi dir="ltr" id="r-profit">—</bdi></strong><small>ر.س</small>
+        <span class="delta" id="r-profit-delta"></span>
+      </div>
+      <p class="muted small" id="r-profit-base"></p>
+    </div>
+
+    <div class="metric-grid two">
+      <div class="metric"><span class="muted small">الطلبات</span><strong class="num"><bdi dir="ltr" id="r-orders">—</bdi></strong><span class="small" id="r-orders-d"></span></div>
+      <div class="metric"><span class="muted small">المبيعات شامل الضريبة</span><strong class="num"><bdi dir="ltr" id="r-gross">—</bdi> <small>ر.س</small></strong><span class="small" id="r-gross-d"></span></div>
+      <div class="metric"><span class="muted small">صافي الشحن</span><strong class="num"><bdi dir="ltr" id="r-ship">—</bdi> <small>ر.س</small></strong><span class="small" id="r-ship-d"></span></div>
+      <div class="metric"><span class="muted small">مصروف الإعلانات</span><strong class="num"><bdi dir="ltr" id="r-ads">—</bdi> <small>ر.س</small></strong><span class="small" id="r-ads-d"></span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div><h2>أثر كل قرار على الربح</h2><p class="muted small">لو طبّقت القرار ده لوحده</p></div></div>
+      <ul class="contrib" id="r-contrib"></ul>
+    </div>
+
+    <p class="muted small assumptions">{{ icon('alert', 14) }}
+      المحاكاة تقديرية: بتفترض إن الطلب بيتأثر بالسعر حسب الحساسية، وإن تقليل الخصم بيقلل طلبات الكوبونات شوية،
+      وإن الزيادة في الإعلانات عائدها أقل من المتوسط الحالي، وإن حد الشحن المجاني ما بيغيّرش سلوك الشراء.
+    </p>
+  </section>
+</div>
+
+<script type="application/json" id="sim-data">{{ sim|tojson }}</script>
+{% endblock %}

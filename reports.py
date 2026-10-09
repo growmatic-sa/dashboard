@@ -153,6 +153,26 @@ def by_field(orders, field):
     return sorted(out, key=lambda r: r["sales"], reverse=True)
 
 
+def by_carrier(orders):
+    rows = defaultdict(lambda: {"orders": 0, "cost": 0.0, "days": 0, "delivered": 0, "late": 0})
+    for o in orders:
+        if o["status"] == "ملغي":
+            continue
+        r = rows[o["carrier"]]
+        r["orders"] += 1
+        r["cost"] += o["ship_cost"]
+        if o["status"] == "تم التسليم":
+            r["delivered"] += 1
+            r["days"] += o["delivery_days"]
+            r["late"] += o["delivery_days"] > finance.DELIVERY_SLA_DAYS
+    out = []
+    for name, r in rows.items():
+        out.append({"name": name, "orders": r["orders"], "avg_cost": r["cost"] / r["orders"],
+                    "avg_days": r["days"] / r["delivered"] if r["delivered"] else 0,
+                    "late_rate": r["late"] / r["delivered"] * 100 if r["delivered"] else 0})
+    return sorted(out, key=lambda r: r["orders"], reverse=True)
+
+
 def trend(kind, store, count=None):
     """إجماليات آخر الفترات للرسم البياني، الأقدم أولاً."""
     count = count or (12 if kind == "week" else 6)
@@ -198,6 +218,8 @@ def build(kind, key, store):
         "products": by_product(orders),
         "cities": by_field(orders, "city"),
         "payments": by_field(orders, "payment"),
+        "carriers": by_carrier(orders),
+        "sources": by_field(orders, "source"),
         "stores_split": by_field(orders, "store") if store == "all" else [],
         "orders": orders,
         "trend": trend(kind, store),

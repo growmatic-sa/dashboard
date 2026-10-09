@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% set tone = {"critical": "danger", "warning": "warn", "opportunity": "brand", "info": "info"} %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>الرؤى والتوصيات</h1>
+    <p class="muted">تحليل تلقائي لبيانات {{ brand.name if store != 'all' else 'كل المتاجر' }}، مرتّب حسب الأهمية والأثر</p>
+  </div>
+  <span class="demo-badge">بيانات تجريبية للعرض</span>
+</div>
+
+<section class="brief">
+  <div class="brief-main">
+    <div class="brief-kicker">{{ icon('clock', 16) }} موجز امبارح</div>
+    <div class="brief-value"><span class="num">{{ brief.sales|money }}</span> <small>ر.س مبيعات</small></div>
+    <div class="brief-sub">
+      {% if brief.change is not none %}
+        <span class="delta {{ 'up' if brief.change >= 0 else 'down' }} on-brand">{{ '▲' if brief.change >= 0 else '▼' }} {{ brief.change|abs|round(1) }}%</span>
+        عن نفس اليوم الأسبوع اللي فات
+      {% endif %}
+    </div>
+  </div>
+  <dl class="brief-facts">
+    <div><dt>الطلبات</dt><dd class="num">{{ brief.orders }}</dd></div>
+    <div><dt>الربح التقديري</dt><dd class="num">{{ brief.profit|money }}</dd></div>
+    <div><dt>عملاء جدد</dt><dd class="num">{{ brief.new_customers }}</dd></div>
+    <div><dt>الأكثر مبيعاً</dt><dd>{{ brief.top[0] if brief.top else '—' }}</dd></div>
+  </dl>
+</section>
+
+{% set counts = {} %}
+<div class="filter-row">
+  <div class="chips" id="insight-filter" role="radiogroup" aria-label="فلترة التوصيات">
+    <button class="chip active" data-filter="" role="radio" aria-checked="true">الكل <span class="chip-n">{{ items|length }}</span></button>
+    {% for key, meta in severity.items() %}
+      {% set n = items|selectattr('severity', 'equalto', key)|list|length %}
+      {% if n %}
+      <button class="chip" data-filter="{{ key }}" role="radio" aria-checked="false"><span class="dot {{ tone[key] }}"></span>{{ meta.label }} <span class="chip-n">{{ n }}</span></button>
+      {% endif %}
+    {% endfor %}
+  </div>
+  <span class="muted small">الأثر تقديري بالشهر</span>
+</div>
+
+<div class="insight-list" id="insights">
+  {% for i in items %}
+  <article class="insight tone-{{ tone[i.severity] }}" data-severity="{{ i.severity }}" data-search="{{ i.title }} {{ i.area }}">
+    <div class="insight-ic">{{ icon(severity[i.severity].icon, 20) }}</div>
+    <div class="insight-body">
+      <div class="insight-tags">
+        <span class="badge {{ tone[i.severity] if tone[i.severity] != 'brand' else 'brand' }}">{{ severity[i.severity].label }}</span>
+        <span class="muted small">{{ i.area }}</span>
+      </div>
+      <h3>{{ i.title }}</h3>
+      <p>{{ i.body }}</p>
+    </div>
+    <div class="insight-side">
+      {% if i.impact %}
+        <div class="impact">
+          <strong class="num">{{ i.impact|money }} <small>ر.س</small></strong>
+          <span class="muted small">{{ i.impact_note }}</span>
+        </div>
+      {% endif %}
+      {% if i.action and can_page(i.action[1]) %}
+        <a class="btn sm" href="{{ url_for('page', key=i.action[1]) }}">{{ i.action[0] }} {{ icon('arrow', 15) }}</a>
+      {% endif %}
+    </div>
+  </article>
+  {% endfor %}
+</div>
+
+<div class="grid-main spaced">
+  <section class="card flush">
+    <div class="card-head padded">
+      <div>
+        <h2>تصنيف المنتجات ABC</h2>
+        <p class="muted small">آخر 90 يوم · A = المنتجات اللي بتجيب أول 80% من المبيعات، ركّز عليها في المخزون والإعلان</p>
+      </div>
+    </div>
+    <table class="data-table">
+      <thead><tr><th>الفئة</th><th>المنتج</th><th class="end">المبيعات</th><th>الحصة التراكمية</th><th class="end">الهامش</th></tr></thead>
+      <tbody>
+        {% for r in abc %}
+        <tr>
+          <td><span class="abc abc-{{ r.cls|lower }}">{{ r.cls }}</span></td>
+          <td><strong>{{ r.name }}</strong> <span class="store-tag {{ r.store }}">{{ store_names[r.store] }}</span></td>
+          <td class="end num">{{ r.revenue|money }} <small class="muted">ر.س</small></td>
+          <td class="meter-cell"><div class="meter-inline"><div class="meter thin"><span class="brand" style="--w: {{ r.cum|round(1) }}%"></span></div><span class="num small muted">{{ r.cum|round|int }}%</span></div></td>
+          <td class="end num">{{ r.margin|round|int }}%</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+
+  <section class="card">
+    <div class="card-head">
+      <div>
+        <h2>بيتشروا مع بعض</h2>
+        <p class="muted small">أفكار باقات وعروض "اشترِ معه"</p>
+      </div>
+      <span class="kpi-icon">{{ icon('link', 18) }}</span>
+    </div>
+    <ul class="pairs">
+      {% for p in pairs %}
+      <li>
+        <div class="pair-names"><span>{{ p.a }}</span><span class="pair-plus">+</span><span>{{ p.b }}</span></div>
+        <div class="pair-meta">
+          <span class="badge {{ 'ok' if p.lift >= 1.2 else 'neutral' }}">{{ p.lift|round(1) }}× أكتر من الصدفة</span>
+          <span class="muted small">{{ p.count }} مرة · {{ p.conf|round|int }}% من مشتري الأول</span>
+        </div>
+      </li>
+      {% else %}
+      <li class="muted">مفيش بيانات كفاية.</li>
+      {% endfor %}
+    </ul>
+  </section>
+</div>
+{% endblock %}

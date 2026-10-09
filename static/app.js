@@ -675,32 +675,51 @@
   }
 
   /* =========================================================
-     المخزون
+     المخزون: خطة إعادة الطلب
      ========================================================= */
   var stockTable = $("#stock-table");
   if (stockTable) {
     var sFilter = "";
     var sRows = $$("tbody tr", stockTable);
-    var LOW = 10, FULL = 50;
-
+    var lead = +stockTable.dataset.lead, safety = +stockTable.dataset.safety;
+    var STATE = {
+      out: ["danger", "نافد"], reorder: ["danger", "اطلب الآن"], soon: ["warn", "اطلب قريباً"],
+      ok: ["ok", "متوفر"], over: ["info", "مخزون راكد"]
+    };
+    var stateOf = function (q, v) {
+      var cover = v ? q / v : Infinity;
+      if (q === 0 && v) return "out";
+      if (q <= v * (lead + safety)) return "reorder";
+      if (cover <= lead + safety + 7) return "soon";
+      if (cover > 90) return "over";
+      return "ok";
+    };
     var paint = function (tr) {
-      var q = +tr.dataset.stock;
+      var q = +tr.dataset.stock, v = +tr.dataset.velocity;
+      var cover = v ? q / v : Infinity;
+      var st = stateOf(q, v);
+      tr.dataset.state = st;
       var meter = $("[data-meter]", tr);
-      var state = q === 0 ? ["danger", "نفد"] : q <= LOW ? ["warn", "منخفض"] : ["ok", "متوفر"];
-      meter.className = state[0];
-      meter.style.setProperty("--w", Math.min(100, q / FULL * 100) + "%");
-      var cell = $("[data-state]", tr);
+      meter.className = STATE[st][0];
+      meter.style.setProperty("--w", (cover === Infinity ? 100 : Math.min(100, cover / 60 * 100)) + "%");
+      $("[data-cover]", tr).textContent = cover === Infinity ? "—" : Math.round(cover) + " يوم";
+      var dateCell = $("[data-date]", tr);
+      if (cover === Infinity || q === 0) dateCell.textContent = q === 0 ? "نافد الآن" : "—";
+      else {
+        var d = new Date(); d.setDate(d.getDate() + Math.floor(cover));
+        dateCell.textContent = df.format(d);
+      }
+      var cell = $("[data-state-cell]", tr);
       cell.innerHTML = "";
       var b = document.createElement("span");
-      b.className = "badge " + state[0];
-      b.textContent = state[1];
+      b.className = "badge " + STATE[st][0];
+      b.textContent = STATE[st][1];
       cell.appendChild(b);
     };
-    var stateOf = function (q) { return q === 0 ? "out" : q <= LOW ? "low" : "ok"; };
     var applyStock = function () {
       var n = 0;
       sRows.forEach(function (tr) {
-        var ok = matches(tr) && (!sFilter || stateOf(+tr.dataset.stock) === sFilter);
+        var ok = matches(tr) && (!sFilter || tr.dataset.state === sFilter);
         tr.hidden = !ok;
         if (ok) n++;
       });
@@ -727,5 +746,179 @@
     });
     radioGroup($("#stock-filter"), "data-filter", function (v) { sFilter = v; applyStock(); });
     searchHandlers.push(applyStock);
+  }
+
+  /* =========================================================
+     جرس التنبيهات
+     ========================================================= */
+  var bellBtn = $("#bell-btn"), bellPanel = $("#bell-panel");
+  if (bellBtn) {
+    var setBell = function (open) {
+      bellPanel.hidden = !open;
+      bellBtn.setAttribute("aria-expanded", open ? "true" : "false");
+    };
+    bellBtn.addEventListener("click", function (e) { e.stopPropagation(); setBell(bellPanel.hidden); });
+    document.addEventListener("click", function (e) { if (!bellPanel.hidden && !bellPanel.contains(e.target)) setBell(false); });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape") setBell(false); });
+  }
+
+  /* =========================================================
+     الرؤى: فلترة حسب الأهمية
+     ========================================================= */
+  var insightList = $("#insights");
+  if (insightList) {
+    var iFilter = "";
+    var cardsI = $$(".insight", insightList);
+    var applyI = function () {
+      cardsI.forEach(function (c) { c.hidden = !(matches(c) && (!iFilter || c.dataset.severity === iFilter)); });
+    };
+    radioGroup($("#insight-filter"), "data-filter", function (v) { iFilter = v; applyI(); });
+    searchHandlers.push(applyI);
+  }
+
+  /* =========================================================
+     محاكي القرارات
+     ========================================================= */
+  var simEl = $("#sim-data");
+  if (simEl) initSimulator(JSON.parse(simEl.textContent));
+
+  function initSimulator(d) {
+    var stores = Object.keys(d.free_over).filter(function (s) { return $("#lv-free-" + s); });
+    var r = d.vat;
+    var base = {
+      price: 0, disc: 1, ads: 0, elastic: d.elasticity,
+      free: Object.assign({}, d.free_over), fee: Object.assign({}, d.fee)
+    };
+    var adMarginRate = 0;  // ربح لكل ريال مبيعات قبل الإعلانات
+
+    // كل طلب: [المتجر، المنتجات بعد الخصم، الخصم، الشحن، تكلفة البضاعة، تكلفة الشحن، نسبة رسوم الدفع]
+    function run(sc) {
+      var orders = 0, gross = 0, profit = 0, shipNet = 0;
+      var vol = Math.max(0, 1 + sc.elastic * sc.price / 100);
+      d.orders.forEach(function (o) {
+        var store = o[0], merch = o[1], disc = o[2], cogs = o[4], shipCost = o[5], feeRate = o[6];
+        var subtotal = merch + disc;
+        var newDisc = disc * sc.disc;
+        var newMerch = (subtotal - newDisc) * (1 + sc.price / 100);
+        // الكوبونات: تقليل الخصم بيقلل طلباتها شوية، وزيادته بتزوّدها شوية
+        var w = vol;
+        if (disc > 0) w *= sc.disc < 1 ? 1 - 0.35 * (1 - sc.disc) : 1 + 0.2 * (sc.disc - 1);
+        var ship = newMerch >= sc.free[store] ? 0 : sc.fee[store];
+        var g = newMerch + ship;
+        var net = g / (1 + r);
+        var p = net - cogs - shipCost - g * feeRate;
+        orders += w; gross += g * w; profit += p * w;
+        shipNet += (ship / (1 + r) - shipCost) * w;
+      });
+      if (!adMarginRate) adMarginRate = profit / gross;
+      // الإعلانات: المبيعات الإضافية بعائد متناقص
+      var spend = d.ad_spend * (1 + sc.ads / 100);
+      var roas = d.ad_spend ? d.ad_revenue / d.ad_spend : 0;
+      var extraRev = d.ad_spend * sc.ads / 100 * roas * (sc.ads > 0 ? d.ad_marginal : 1);
+      var aov = gross / orders;
+      orders += aov ? extraRev / aov : 0;
+      gross += extraRev;
+      profit += extraRev * adMarginRate;
+      var scale = 30 / d.window;
+      return { orders: orders * scale, gross: gross * scale, ship: shipNet * scale, ads: spend * scale, profit: (profit - spend) * scale };
+    }
+
+    function read() {
+      var sc = {
+        price: +$("#lv-price").value, disc: +$("#lv-disc").value / 100, ads: +$("#lv-ads").value,
+        elastic: +$("#lv-elastic").value, free: {}, fee: {}
+      };
+      stores.forEach(function (s) { sc.free[s] = +$("#lv-free-" + s).value; sc.fee[s] = +$("#lv-fee-" + s).value; });
+      Object.keys(base.free).forEach(function (s) { if (!(s in sc.free)) { sc.free[s] = base.free[s]; sc.fee[s] = base.fee[s]; } });
+      return sc;
+    }
+    var fmt = function (v) { return (v < 0 ? "−" : "") + nf.format(Math.abs(Math.round(v))); };
+    function setDelta(el, cur, b, invert) {
+      var diff = cur - b;
+      if (Math.abs(diff) < 0.5) { el.className = "small muted"; el.textContent = "بدون تغيير"; return; }
+      var good = (diff > 0) !== !!invert;
+      el.className = "delta " + (good ? "up" : "down");
+      el.textContent = (diff > 0 ? "+" : "−") + nf.format(Math.abs(Math.round(diff)));
+    }
+
+    var baseline;
+    function update() {
+      var sc = read();
+      $("#out-price").textContent = (sc.price > 0 ? "+" : "") + sc.price + "%";
+      $("#out-disc").textContent = Math.round(sc.disc * 100) + "%";
+      $("#out-ads").textContent = (sc.ads > 0 ? "+" : "") + sc.ads + "%";
+      $("#out-elastic").textContent = sc.elastic.toFixed(1);
+      stores.forEach(function (s) {
+        $("#out-free-" + s).textContent = sc.free[s] ? sc.free[s] + " ر.س" : "دايماً مجاني";
+        $("#out-fee-" + s).textContent = sc.fee[s] + " ر.س";
+      });
+      var bsc = JSON.parse(JSON.stringify(base)); bsc.elastic = sc.elastic;
+      baseline = run(bsc);
+      var res = run(sc);
+
+      $("#r-profit").textContent = fmt(res.profit);
+      $("#r-profit").classList.toggle("neg", res.profit < 0);
+      var pd = res.profit - baseline.profit;
+      var pde = $("#r-profit-delta");
+      if (Math.abs(pd) < 1) { pde.className = "delta"; pde.textContent = ""; }
+      else {
+        pde.className = "delta " + (pd > 0 ? "up" : "down");
+        pde.textContent = (pd > 0 ? "▲ +" : "▼ −") + nf.format(Math.abs(Math.round(pd))) + " ر.س";
+      }
+      $("#r-profit-base").textContent = "الوضع الحالي: " + fmt(baseline.profit) + " ر.س شهرياً";
+      [["orders", false], ["gross", false], ["ship", false], ["ads", true]].forEach(function (k) {
+        $("#r-" + k[0]).textContent = fmt(res[k[0]]);
+        $("#r-" + k[0]).classList.toggle("neg", res[k[0]] < -0.5);
+        setDelta($("#r-" + k[0] + "-d"), res[k[0]], baseline[k[0]], k[1]);
+      });
+
+      // أثر كل قرار لوحده
+      var levers = [
+        ["الأسعار", function (x) { x.price = sc.price; }],
+        ["الخصومات", function (x) { x.disc = sc.disc; }],
+        ["الشحن", function (x) { x.free = sc.free; x.fee = sc.fee; }],
+        ["الإعلانات", function (x) { x.ads = sc.ads; }]
+      ];
+      var contrib = levers.map(function (l) {
+        var x = JSON.parse(JSON.stringify(bsc)); l[1](x);
+        return { name: l[0], v: run(x).profit - baseline.profit };
+      });
+      var maxAbs = Math.max.apply(null, contrib.map(function (c) { return Math.abs(c.v); }).concat([1]));
+      var list = $("#r-contrib");
+      list.innerHTML = "";
+      contrib.forEach(function (c) {
+        var li = document.createElement("li");
+        var name = document.createElement("span"); name.className = "contrib-name"; name.textContent = c.name;
+        var track = document.createElement("div"); track.className = "contrib-track";
+        var bar = document.createElement("span");
+        bar.className = "contrib-bar " + (c.v >= 0 ? "pos" : "neg-bar");
+        bar.style.setProperty("--w", (Math.abs(c.v) / maxAbs * 50) + "%");
+        track.appendChild(bar);
+        var val = document.createElement("strong"); val.className = "num contrib-val " + (c.v < -0.5 ? "neg" : "");
+        val.textContent = Math.abs(c.v) < 0.5 ? "0" : (c.v > 0 ? "+" : "−") + nf.format(Math.abs(Math.round(c.v)));
+        li.appendChild(name); li.appendChild(track); li.appendChild(val);
+        list.appendChild(li);
+      });
+    }
+
+    $$(".sim-controls input[type=range]").forEach(function (inp) { inp.addEventListener("input", update); });
+
+    var setVal = function (id, v) { var el = $(id); if (el) el.value = v; };
+    function reset() {
+      setVal("#lv-price", 0); setVal("#lv-disc", 100); setVal("#lv-ads", 0);
+      stores.forEach(function (s) { setVal("#lv-free-" + s, base.free[s]); setVal("#lv-fee-" + s, base.fee[s]); });
+    }
+    $("#sim-presets").addEventListener("click", function (e) {
+      var b = e.target.closest("[data-preset]");
+      if (!b) return;
+      reset();
+      var p = b.dataset.preset;
+      if (p === "price5") setVal("#lv-price", 5);
+      if (p === "ship") stores.forEach(function (s) { setVal("#lv-free-" + s, base.free[s] + 50); });
+      if (p === "nodisc") setVal("#lv-disc", 50);
+      if (p === "ads") setVal("#lv-ads", 30);
+      update();
+    });
+    update();
   }
 })();

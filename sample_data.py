@@ -12,18 +12,18 @@ import finance
 HISTORY_DAYS = 180
 
 PRODUCTS = [
-    {"id": 1, "name": "سيروم فيتامين C", "category": "العناية بالبشرة", "store": "smooth", "price": 189, "cost": 62, "stock": 42, "status": "active"},
-    {"id": 2, "name": "كريم ترطيب يومي", "category": "العناية بالبشرة", "store": "smooth", "price": 145, "cost": 48, "stock": 6, "status": "active"},
+    {"id": 1, "name": "سيروم فيتامين C", "category": "العناية بالبشرة", "store": "smooth", "price": 189, "cost": 62, "stock": 95, "status": "active"},
+    {"id": 2, "name": "كريم ترطيب يومي", "category": "العناية بالبشرة", "store": "smooth", "price": 145, "cost": 48, "stock": 60, "status": "active"},
     {"id": 3, "name": "ماسك طين للبشرة الدهنية", "category": "ماسكات", "store": "smooth", "price": 75, "cost": 22, "stock": 0, "status": "active"},
-    {"id": 4, "name": "غسول لطيف يومي", "category": "منظفات", "store": "smooth", "price": 95, "cost": 30, "stock": 18, "status": "active"},
-    {"id": 5, "name": "واقي شمس SPF 50", "category": "العناية بالبشرة", "store": "smooth", "price": 120, "cost": 41, "stock": 31, "status": "active"},
-    {"id": 6, "name": "تونر الورد", "category": "منظفات", "store": "smooth", "price": 85, "cost": 26, "stock": 9, "status": "draft"},
-    {"id": 7, "name": "رموش صناعية كثيفة", "category": "رموش", "store": "glorias", "price": 59, "cost": 14, "stock": 3, "status": "active"},
-    {"id": 8, "name": "غراء رموش شفاف", "category": "أدوات", "store": "glorias", "price": 49, "cost": 11, "stock": 25, "status": "active"},
-    {"id": 9, "name": "مزيل غراء آمن", "category": "أدوات", "store": "glorias", "price": 35, "cost": 8, "stock": 14, "status": "active"},
-    {"id": 10, "name": "طقم رموش مجموعة الصيف", "category": "رموش", "store": "glorias", "price": 120, "cost": 34, "stock": 9, "status": "draft"},
+    {"id": 4, "name": "غسول لطيف يومي", "category": "منظفات", "store": "smooth", "price": 95, "cost": 30, "stock": 340, "status": "active"},
+    {"id": 5, "name": "واقي شمس SPF 50", "category": "العناية بالبشرة", "store": "smooth", "price": 120, "cost": 41, "stock": 650, "status": "active"},
+    {"id": 6, "name": "تونر الورد", "category": "منظفات", "store": "smooth", "price": 85, "cost": 26, "stock": 210, "status": "active"},
+    {"id": 7, "name": "رموش صناعية كثيفة", "category": "رموش", "store": "glorias", "price": 59, "cost": 14, "stock": 40, "status": "active"},
+    {"id": 8, "name": "غراء رموش شفاف", "category": "أدوات", "store": "glorias", "price": 49, "cost": 11, "stock": 180, "status": "active"},
+    {"id": 9, "name": "مزيل غراء آمن", "category": "أدوات", "store": "glorias", "price": 35, "cost": 8, "stock": 260, "status": "active"},
+    {"id": 10, "name": "طقم رموش مجموعة الصيف", "category": "رموش", "store": "glorias", "price": 120, "cost": 34, "stock": 130, "status": "active"},
     {"id": 11, "name": "رموش طبيعية ناعمة", "category": "رموش", "store": "glorias", "price": 55, "cost": 13, "stock": 0, "status": "active"},
-    {"id": 12, "name": "ملقط رموش ذهبي", "category": "أدوات", "store": "glorias", "price": 39, "cost": 9, "stock": 47, "status": "active"},
+    {"id": 12, "name": "ملقط رموش ذهبي", "category": "أدوات", "store": "glorias", "price": 39, "cost": 9, "stock": 900, "status": "active"},
 ]
 
 _FIRST = ["نورة", "خالد", "ريم", "عبدالله", "هند", "فهد", "سارة", "محمد", "لمى", "تركي", "جود", "عبير",
@@ -34,6 +34,15 @@ _LAST = ["السالم", "العتيبي", "الشهري", "القحطاني", "
 _CITIES = [("الرياض", 34), ("جدة", 20), ("الدمام", 10), ("مكة", 9), ("المدينة", 7), ("الخبر", 6),
            ("أبها", 5), ("تبوك", 4), ("القصيم", 5)]
 _PAYMENTS = [("مدى", 38), ("Apple Pay", 24), ("فيزا", 14), ("تمارا", 14), ("الدفع عند الاستلام", 10)]
+# ساعات الطلب: ذروة بالليل
+_HOURS = [(h, w) for h, w in zip(range(24), [4, 2, 1, 1, 1, 1, 1, 2, 3, 4, 5, 6, 7, 7, 6, 6, 7, 8, 9, 11, 13, 15, 14, 9])]
+_SOURCES = [("سناب شات", 30), ("تيك توك", 22), ("انستقرام", 14), ("قوقل", 10), ("مباشر", 16)]
+# كوبونات كل متجر: الكود -> (نسبة الخصم، كود مؤثر؟)
+COUPONS = {
+    "smooth": {"WELCOME10": (0.10, False), "SMOOTH15": (0.15, False), "VIP20": (0.20, False), "NOURA10": (0.10, True)},
+    "glorias": {"WELCOME10": (0.10, False), "LASH15": (0.15, False), "GLOW20": (0.20, False), "RAWAN15": (0.15, True)},
+}
+_CARRIER_W = [("سمسا", 40), ("أرامكس", 20), ("سبل", 25), ("ريدبوكس", 15)]
 
 # الحالة -> (صنف اللون، الأيقونة)
 STATUSES = {
@@ -50,9 +59,12 @@ def _weighted(rnd, pairs):
     return rnd.choices([p[0] for p in pairs], weights=[p[1] for p in pairs])[0]
 
 
-def _status_for(rnd, days_ago):
-    if rnd.random() < 0.055:
+def _status_for(rnd, days_ago, payment):
+    # الدفع عند الاستلام إلغاؤه أعلى
+    if rnd.random() < (0.16 if payment == "الدفع عند الاستلام" else 0.04):
         return "ملغي"
+    if 3 <= days_ago <= 5 and rnd.random() < 0.07:
+        return "قيد التجهيز"  # طلبات متأخرة في التجهيز
     if days_ago == 0:
         return rnd.choice(["جديد", "جديد", "قيد التجهيز"])
     if days_ago <= 2:
@@ -70,7 +82,7 @@ def enrich(o):
     o["merch_ex_vat"] = finance.ex_vat(o["subtotal"] - o["discount"])
     o["ship_ex_vat"] = finance.ex_vat(o["shipping"])
     o["cogs"] = sum(l["qty"] * l["cost"] for l in o["lines"])
-    o["ship_cost"] = finance.carrier_cost(o["city"])
+    o["ship_cost"] = finance.carrier_cost_for(o["city"], o["carrier"])
     o["pay_fee"] = finance.payment_fee(o["payment"], gross)
     o["profit"] = o["net"] - o["cogs"] - o["ship_cost"] - o["pay_fee"]
     return o
@@ -94,7 +106,8 @@ def _build_orders():
             for _ in range(count):
                 seq += 1
                 pool = pools[store]
-                if pool and rnd.random() < 0.38:
+                is_new = not (pool and rnd.random() < 0.38)
+                if not is_new:
                     cust = rnd.choice(pool)
                 else:
                     cust = {"id": f"{store[0]}{len(pool) + 1}",
@@ -106,7 +119,19 @@ def _build_orders():
                     lines.append({"product_id": p["id"], "name": p["name"], "qty": rnd.choices([1, 2, 3], weights=[70, 22, 8])[0],
                                   "price": p["price"], "cost": p["cost"]})
                 subtotal = sum(l["qty"] * l["price"] for l in lines)
-                discount = round(subtotal * rnd.choice([0.10, 0.15])) if rnd.random() < 0.2 else 0
+                coupon = None
+                codes = COUPONS[store]
+                if rnd.random() < 0.24:
+                    coupon = rnd.choice([c for c in codes if c != "WELCOME10"] + (["WELCOME10"] * 2 if is_new else []))
+                discount = round(subtotal * codes[coupon][0]) if coupon else 0
+                if coupon and codes[coupon][1]:
+                    source = "مؤثرين"
+                else:
+                    source = _weighted(rnd, _SOURCES)
+                payment = _weighted(rnd, _PAYMENTS)
+                carrier = _weighted(rnd, _CARRIER_W)
+                lo, hi = finance.CARRIERS[carrier]["days"]
+                delivery_days = rnd.randint(lo, hi)
                 shipping = finance.shipping_charged(store, subtotal - discount)
                 orders.append(enrich({
                     "id": str(seq),
@@ -115,14 +140,19 @@ def _build_orders():
                     "customer": cust["name"],
                     "city": cust["city"],
                     "date": d.isoformat(),
-                    "payment": _weighted(rnd, _PAYMENTS),
+                    "payment": payment,
+                    "hour": _weighted(rnd, _HOURS),
+                    "source": source,
+                    "coupon": coupon,
+                    "carrier": carrier,
+                    "delivery_days": delivery_days,
                     "lines": lines,
                     "qty": sum(l["qty"] for l in lines),
                     "subtotal": subtotal,
                     "discount": discount,
                     "shipping": shipping,
                     "total": subtotal - discount + shipping,
-                    "status": _status_for(rnd, days_ago),
+                    "status": _status_for(rnd, days_ago, payment),
                 }))
     orders.reverse()  # الأحدث أولاً
     return orders
@@ -172,6 +202,29 @@ def _build_daily():
 
 
 DAILY = _build_daily()
+
+# العائد المستهدف لكل قناة (الإيراد ÷ المصروف) عشان البيانات التجريبية تبان واقعية
+_TARGET_ROAS = {"سناب شات": 4.2, "تيك توك": 5.6, "انستقرام": 2.6, "قوقل": 6.3, "مؤثرين": 2.1}
+
+
+def _build_ad_spend():
+    """مصروف الإعلانات اليومي: {(تاريخ، متجر، قناة): مبلغ}."""
+    rnd = random.Random(5)
+    revenue = defaultdict(float)
+    for o in ALL_ORDERS:
+        if o["status"] != "ملغي" and o["source"] in _TARGET_ROAS:
+            revenue[(o["date"], o["store"], o["source"])] += o["total"]
+    spend = {}
+    for i in range(HISTORY_DAYS):
+        d = (date.today() - timedelta(days=HISTORY_DAYS - 1 - i)).isoformat()
+        for store in ("smooth", "glorias"):
+            for ch, roas in _TARGET_ROAS.items():
+                rev = revenue.get((d, store, ch), 0)
+                spend[(d, store, ch)] = round(max(rev, 150) / roas * rnd.uniform(0.8, 1.2))
+    return spend
+
+
+AD_SPEND = _build_ad_spend()
 
 
 def for_store(items, store):

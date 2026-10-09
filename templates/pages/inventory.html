@@ -1,51 +1,67 @@
 {% extends "base.html" %}
 {% from "_icons.html" import icon %}
+{% set states = {
+  "out": ("danger", "نافد"),
+  "reorder": ("danger", "اطلب الآن"),
+  "soon": ("warn", "اطلب قريباً"),
+  "ok": ("ok", "متوفر"),
+  "over": ("info", "مخزون راكد"),
+} %}
 {% block content %}
 <div class="page-head">
   <div>
-    <h1>المخزون</h1>
-    <p class="muted">تابع الكميات وعدّلها بسرعة</p>
+    <h1>المخزون وخطة إعادة الطلب</h1>
+    <p class="muted">محسوبة على سرعة البيع في آخر 30 يوم · وصول البضاعة {{ lead_time }} أيام · الكمية المقترحة تكفي {{ cover_target }} يوم</p>
   </div>
   <span class="demo-badge">بيانات تجريبية للعرض</span>
 </div>
 
-<section class="mini-stats">
-  <div class="mini-stat"><span class="mini-ic brand">{{ icon('boxes', 18) }}</span><div><strong class="num">{{ products|length }}</strong><span class="muted small">إجمالي المنتجات</span></div></div>
-  <div class="mini-stat"><span class="mini-ic warn">{{ icon('alert', 18) }}</span><div><strong class="num">{{ low|length - out|length }}</strong><span class="muted small">كمية منخفضة</span></div></div>
-  <div class="mini-stat"><span class="mini-ic danger">{{ icon('x', 18) }}</span><div><strong class="num">{{ out|length }}</strong><span class="muted small">نفد من المخزون</span></div></div>
+<section class="mini-stats four">
+  <div class="mini-stat"><span class="mini-ic brand">{{ icon('boxes', 18) }}</span><div><strong class="num">{{ stock_value|money }}</strong><span class="muted small">قيمة المخزون بالتكلفة (ر.س)</span></div></div>
+  <div class="mini-stat"><span class="mini-ic danger">{{ icon('alert', 18) }}</span><div><strong class="num">{{ counts.out + counts.reorder }}</strong><span class="muted small">محتاج طلب دلوقتي</span></div></div>
+  <div class="mini-stat"><span class="mini-ic warn">{{ icon('card', 18) }}</span><div><strong class="num">{{ cash_needed|money }}</strong><span class="muted small">سيولة مطلوبة لإعادة الطلب (ر.س)</span></div></div>
+  <div class="mini-stat"><span class="mini-ic info">{{ icon('clock', 18) }}</span><div><strong class="num">{{ counts.over }}</strong><span class="muted small">مخزون راكد (أكتر من 90 يوم)</span></div></div>
 </section>
 
 <div class="filter-row">
   <div class="chips" id="stock-filter" role="radiogroup" aria-label="فلترة المخزون">
-    <button class="chip active" data-filter="" role="radio" aria-checked="true">الكل</button>
-    <button class="chip" data-filter="low" role="radio" aria-checked="false"><span class="dot warn"></span>منخفض</button>
-    <button class="chip" data-filter="out" role="radio" aria-checked="false"><span class="dot danger"></span>نفد</button>
-    <button class="chip" data-filter="ok" role="radio" aria-checked="false"><span class="dot ok"></span>متوفر</button>
+    <button class="chip active" data-filter="" role="radio" aria-checked="true">الكل <span class="chip-n">{{ plan|length }}</span></button>
+    {% for key, st in states.items() %}
+      {% if counts[key] %}
+      <button class="chip" data-filter="{{ key }}" role="radio" aria-checked="false"><span class="dot {{ st[0] }}"></span>{{ st[1] }} <span class="chip-n">{{ counts[key] }}</span></button>
+      {% endif %}
+    {% endfor %}
   </div>
 </div>
 
 <div class="card flush">
-  <table class="data-table" id="stock-table">
+  <table class="data-table" id="stock-table" data-lead="{{ lead_time }}" data-safety="5">
     <thead>
-      <tr><th>المنتج</th><th>المتجر</th><th>المستوى</th><th>الحالة</th><th class="center">الكمية</th></tr>
+      <tr><th>المنتج</th><th class="end">بيع يومي</th><th>يكفي لـ</th><th>النفاد المتوقع</th><th class="end">اقتراح الطلب</th><th>الحالة</th><th class="center">المخزون</th></tr>
     </thead>
     <tbody>
-      {% for p in products %}
-      <tr data-stock="{{ p.stock }}" data-search="{{ p.name }} {{ store_names[p.store] }}">
+      {% for p in plan %}
+      <tr data-stock="{{ p.stock }}" data-velocity="{{ p.velocity|round(3) }}" data-state="{{ p.state }}"
+          data-search="{{ p.name }} {{ store_names[p.store] }}">
         <td>
           <div class="cell-user">
             <span class="mini-thumb store-{{ p.store }}">{{ p.name[:1] }}</span>
-            <div><div>{{ p.name }}</div><div class="muted small">{{ p.category }}</div></div>
+            <div><div>{{ p.name }}</div><div class="muted small">{{ store_names[p.store] }} · {{ p.category }}</div></div>
           </div>
         </td>
-        <td><span class="store-tag {{ p.store }}">{{ store_names[p.store] }}</span></td>
-        <td class="meter-cell"><div class="meter"><span data-meter></span></div></td>
-        <td data-state></td>
+        <td class="end num">{{ p.velocity|round(1) }}</td>
+        <td class="meter-cell"><div class="meter-inline"><div class="meter thin"><span data-meter></span></div><span class="num small" data-cover></span></div></td>
+        <td class="muted small" data-date>{{ p.stockout_date.isoformat() if p.stockout_date else '' }}</td>
+        <td class="end">
+          {% if p.reorder_qty %}<strong class="num">{{ p.reorder_qty }}</strong> <span class="muted small">قطعة · {{ p.reorder_cash|money }} ر.س</span>
+          {% else %}<span class="muted">—</span>{% endif %}
+        </td>
+        <td data-state-cell><span class="badge {{ states[p.state][0] }}">{{ states[p.state][1] }}</span></td>
         <td class="center">
           <div class="stepper">
-            <button class="icon-btn sm" data-step="-1" aria-label="إنقاص">{{ icon('minus', 16) }}</button>
+            <button class="icon-btn sm" data-step="-5" aria-label="إنقاص 5">{{ icon('minus', 16) }}</button>
             <output class="num" data-qty>{{ p.stock }}</output>
-            <button class="icon-btn sm" data-step="1" aria-label="زيادة">{{ icon('plus', 16) }}</button>
+            <button class="icon-btn sm" data-step="5" aria-label="زيادة 5">{{ icon('plus', 16) }}</button>
           </div>
         </td>
       </tr>

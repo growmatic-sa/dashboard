@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>التسويق والإعلانات</h1>
+    <p class="muted">آخر {{ window }} يوم · {{ brand.name if store != 'all' else 'كل المتاجر' }}</p>
+  </div>
+  <span class="demo-badge">بيانات تجريبية للعرض</span>
+</div>
+
+<div class="filter-row">
+  <div class="segmented" role="radiogroup" aria-label="الفترة">
+    {% for d in (7, 30, 90) %}
+      <a role="radio" aria-checked="{{ 'true' if d == window else 'false' }}" class="seg-link {{ 'active' if d == window }}" href="{{ url_for('page', key='marketing', days=d) }}">{{ d }} {{ 'أيام' if d == 7 else 'يوم' }}</a>
+    {% endfor %}
+  </div>
+  <span class="muted small">العائد = المبيعات ÷ مصروف الإعلان</span>
+</div>
+
+<section class="kpis">
+  <article class="kpi plain">
+    <div class="kpi-top"><span class="kpi-icon">{{ icon('megaphone', 18) }}</span><span class="kpi-label">مصروف الإعلانات</span></div>
+    <div class="kpi-value">{{ mk.spend|money }} <small>ر.س</small></div>
+    <div class="kpi-foot"><span class="muted small">{{ mk.ad_share|pct }} من المبيعات</span></div>
+  </article>
+  <article class="kpi plain">
+    <div class="kpi-top"><span class="kpi-icon">{{ icon('chart', 18) }}</span><span class="kpi-label">العائد الإجمالي (MER)</span></div>
+    <div class="kpi-value">{{ mk.mer|round(1) }}<small>×</small></div>
+    <div class="kpi-foot"><span class="muted small">كل ريال إعلان جاب {{ mk.mer|round(1) }} ر.س مبيعات</span></div>
+  </article>
+  <article class="kpi plain">
+    <div class="kpi-top"><span class="kpi-icon">{{ icon('users', 18) }}</span><span class="kpi-label">تكلفة جلب العميل</span></div>
+    <div class="kpi-value">{{ mk.cac|money }} <small>ر.س</small></div>
+    <div class="kpi-foot"><span class="muted small">{{ mk.new_customers|money }} عميل جديد من الإعلانات</span></div>
+  </article>
+  <article class="kpi plain">
+    <div class="kpi-top"><span class="kpi-icon">{{ icon('spark', 18) }}</span><span class="kpi-label">الربح بعد الإعلانات</span></div>
+    <div class="kpi-value">{{ mk.profit_after_ads|signed }} <small>ر.س</small></div>
+    <div class="kpi-foot"><span class="muted small">قبل الإعلانات {{ mk.profit_before_ads|money }} ر.س</span></div>
+  </article>
+</section>
+
+  <section class="card flush spaced-b">
+    <div class="card-head padded"><div><h2>أداء القنوات</h2><p class="muted small">مرتّبة من الأعلى عائداً · الربح بعد خصم مصروف القناة</p></div></div>
+    <table class="data-table">
+      <thead><tr><th>القناة</th><th class="end">المصروف</th><th class="end">الطلبات</th><th class="end">المبيعات</th><th>العائد</th><th class="end">عملاء جدد</th><th class="end">تكلفة العميل</th><th class="end">الربح بعد الإعلان</th></tr></thead>
+      <tbody>
+        {% set max_roas = (mk.channels|map(attribute='roas')|max) if mk.channels else 1 %}
+        {% for c in mk.channels %}
+        <tr>
+          <td><strong>{{ c.name }}</strong></td>
+          <td class="end num">{{ c.spend|money }}</td>
+          <td class="end num">{{ c.orders|money }}</td>
+          <td class="end num">{{ c.revenue|money }}</td>
+          <td class="meter-cell"><div class="meter-inline"><div class="meter thin"><span class="{{ 'ok' if c.roas >= 4 else ('warn' if c.roas >= 2.5 else 'danger') }}" style="--w: {{ (c.roas / max_roas * 100)|round(1) }}%"></span></div><span class="num small"><strong>{{ c.roas|round(1) }}×</strong></span></div></td>
+          <td class="end num">{{ c.new }}</td>
+          <td class="end num">{{ c.cac|money if c.cac else '—' }}</td>
+          <td class="end num">{{ c.net|signed }}</td>
+        </tr>
+        {% endfor %}
+        <tr class="muted-row">
+          <td><strong>{{ mk.organic.name }}</strong> <span class="muted small">بدون إعلان</span></td>
+          <td class="end num">—</td>
+          <td class="end num">{{ mk.organic.orders|money }}</td>
+          <td class="end num">{{ mk.organic.revenue|money }}</td>
+          <td class="muted small">—</td>
+          <td class="end num">{{ mk.organic.new }}</td>
+          <td class="end num">—</td>
+          <td class="end num">{{ mk.organic.profit|signed }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+<div class="grid-main">
+  <section class="card">
+  <div class="card-head">
+    <div>
+      <h2>أفضل أوقات البيع</h2>
+      <p class="muted small">عدد الطلبات حسب اليوم والساعة · الذروة {{ heat.best.day }} {{ heat.best.slot }} · استخدمه لجدولة الإعلانات والرسائل</p>
+    </div>
+  </div>
+  <div class="table-scroll">
+    <table class="heat">
+      <thead><tr><th></th>{% for s in heat.slots %}<th class="center" dir="ltr">{{ s }}</th>{% endfor %}</tr></thead>
+      <tbody>
+        {% for row in heat.grid %}
+        {% set day = heat.days[loop.index0] %}
+        <tr>
+          <th>{{ day }}</th>
+          {% for v in row %}
+            {% set pct = v / heat.peak * 100 %}
+            <td class="cell {{ 'strong' if pct >= 55 }}" style="--v: {{ pct|round(1) }}%" title="{{ day }} {{ heat.slots[loop.index0] }}: {{ v }} طلب"><span class="num">{{ v }}</span></td>
+          {% endfor %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+  <section class="card">
+    <div class="card-head">
+      <div><h2>الميزانية مقابل المبيعات</h2><p class="muted small">لو حصة الميزانية أكبر من حصة المبيعات، القناة بتاخد أكتر من نصيبها</p></div>
+    </div>
+    <div class="legend legend-block">
+      <span><i style="background: var(--primary)"></i>حصة الميزانية</span>
+      <span><i style="background: var(--ink-2)"></i>حصة المبيعات</span>
+    </div>
+    {% set ad_rev = mk.channels|sum(attribute='revenue') or 1 %}
+    <ul class="dual-list">
+      {% for c in mk.channels %}
+        {% set sp = c.spend / (mk.spend or 1) * 100 %}
+        {% set rv = c.revenue / ad_rev * 100 %}
+        <li>
+          <div class="share-head"><span>{{ c.name }}</span><span class="muted small num">{{ sp|round|int }}% · {{ rv|round|int }}%</span></div>
+          <div class="meter thin"><span class="brand-solid" style="--w: {{ sp|round(1) }}%"></span></div>
+          <div class="meter thin"><span class="ink" style="--w: {{ rv|round(1) }}%"></span></div>
+        </li>
+      {% endfor %}
+    </ul>
+  </section>
+</div>
+
+<section class="card flush">
+  <div class="card-head padded"><div><h2>الكوبونات وأكواد المؤثرين</h2><p class="muted small">الربح بعد الخصم وتكلفة البضاعة والشحن والرسوم</p></div><span class="kpi-icon">{{ icon('tag', 18) }}</span></div>
+  <table class="data-table">
+    <thead><tr><th>الكود</th><th>المتجر</th><th class="end">الاستخدام</th><th class="end">الخصم</th><th class="end">المبيعات</th><th class="end">الخصم الممنوح</th><th class="end">متوسط الطلب</th><th class="end">ربح الطلب</th></tr></thead>
+    <tbody>
+      {% set avg_ppo = (coupons|sum(attribute='profit')) / ((coupons|sum(attribute='uses')) or 1) %}
+      {% for c in coupons %}
+      <tr>
+        <td><code class="code">{{ c.code }}</code> {% if c.influencer %}<span class="badge info">مؤثر</span>{% endif %}</td>
+        <td><span class="store-tag {{ c.store }}">{{ store_names[c.store] }}</span></td>
+        <td class="end num">{{ c.uses }}</td>
+        <td class="end num">{{ c.rate|round|int }}%</td>
+        <td class="end num">{{ c.revenue|money }}</td>
+        <td class="end num">{{ c.discount|money }}</td>
+        <td class="end num">{{ c.aov|money }}</td>
+        <td class="end num"><span class="badge {{ 'ok' if c.profit_per_order >= avg_ppo else 'warn' }}">{{ c.profit_per_order|money }} ر.س</span></td>
+      </tr>
+      {% else %}
+      <tr><td colspan="8" class="muted">مفيش كوبونات مستخدمة في الفترة دي.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+
+
+{% endblock %}

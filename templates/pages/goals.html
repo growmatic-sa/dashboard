@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+
+{% macro progress_card(g, title, logo=None) %}
+  {% set on_track = g.projected_pct >= 97 %}
+  <section class="card goal-card">
+    <div class="card-head">
+      <div class="goal-title">
+        {% if logo %}<img src="{{ url_for('static', filename=logo) }}" alt="">{% endif %}
+        <div><h2>{{ title }}</h2><p class="muted small">{{ g.month_label }} · مضى {{ g.elapsed }} من {{ g.days_in_month }} يوم</p></div>
+      </div>
+      <span class="badge {{ 'ok' if on_track else 'warn' }}">{{ 'على الطريق' if on_track else 'متأخر عن الهدف' }}</span>
+    </div>
+
+    <div class="goal-numbers">
+      <div><span class="muted small">المحقق</span><strong class="num">{{ g.mtd|money }}</strong></div>
+      <div><span class="muted small">الهدف</span><strong class="num">{{ g.target|money }}</strong></div>
+      <div><span class="muted small">التوقع لنهاية الشهر</span><strong class="num {{ '' if on_track else 'neg' }}">{{ g.projected|money }}</strong></div>
+    </div>
+
+    <div class="goal-bar" style="--done: {{ [g.pct, 100]|min|round(1) }}%; --proj: {{ [g.projected_pct, 100]|min|round(1) }}%; --time: {{ g.time_pct|round(1) }}%">
+      <div class="goal-proj"></div>
+      <div class="goal-done"></div>
+      <div class="goal-time" title="النهارده"><span>النهارده</span></div>
+    </div>
+    <div class="goal-legend">
+      <span><i class="k-done"></i>المحقق {{ g.pct|round|int }}%</span>
+      <span><i class="k-proj"></i>المتوقع {{ g.projected_pct|round|int }}%</span>
+      <span><i class="k-time"></i>الوقت المنقضي {{ g.time_pct|round|int }}%</span>
+    </div>
+
+    <dl class="facts compact">
+      <div><dt>المعدل اليومي الحالي (آخر 14 يوم)</dt><dd class="num">{{ g.run_rate|money }} ر.س</dd></div>
+      <div><dt>المطلوب يومياً لباقي الشهر</dt><dd class="num {{ '' if g.required_daily <= g.run_rate else 'neg' }}">{{ g.required_daily|money }} ر.س</dd></div>
+      <div><dt>الربح التقديري حتى الآن</dt><dd class="num">{{ g.mtd_profit|money }} ر.س</dd></div>
+    </dl>
+  </section>
+{% endmacro %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>الأهداف والتوقعات</h1>
+    <p class="muted">هدف المبيعات الشهري (شامل الضريبة) وتوقّع نهاية الشهر على المعدل الحالي</p>
+  </div>
+  <span class="demo-badge">بيانات تجريبية للعرض</span>
+</div>
+
+{% if total %}
+  {{ progress_card(total, 'كل المتاجر') }}
+{% endif %}
+
+<div class="grid-{{ goal_rows|length if goal_rows|length > 1 else 1 }}">
+  {% for r in goal_rows %}
+    {{ progress_card(r.progress, store_names[r.store], brand_for(r.store).logo) }}
+  {% endfor %}
+</div>
+
+<div class="grid-main spaced">
+  <section class="card">
+    <div class="card-head"><div><h2>المبيعات في آخر 6 شهور</h2><p class="muted small">عشان تحط هدف واقعي</p></div></div>
+    {% for r in goal_rows %}
+      {% set peak = (r.history|map(attribute='total')|max) or 1 %}
+      <div class="hist">
+        <div class="hist-title"><span class="store-tag {{ r.store }}">{{ store_names[r.store] }}</span></div>
+        <div class="hist-bars">
+          {% for h in r.history %}
+          <div class="hist-col" title="{{ h.label }}: {{ h.total|money }} ر.س">
+            <span class="num small">{{ (h.total / 1000)|round(1) }}k</span>
+            <div class="hist-bar store-{{ r.store }}-fill" style="--h: {{ (h.total / peak * 100)|round(1) }}%"></div>
+            <span class="muted small">{{ h.label }}</span>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endfor %}
+  </section>
+
+  <section class="card">
+    <div class="card-head"><div><h2>تعديل أهداف الشهر</h2><p class="muted small">الهدف المقترح = آخر شهر مكتمل + 10%</p></div><span class="kpi-icon">{{ icon('target', 18) }}</span></div>
+    {% if editable %}
+    <form method="post" action="{{ url_for('goals_save') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      {% for r in goal_rows %}
+      <label class="field">هدف {{ store_names[r.store] }} (ر.س)
+        <input type="text" inputmode="numeric" name="target_{{ r.store }}" value="{{ r.progress.target|round|int }}" dir="ltr">
+        <span class="muted small">المقترح: {{ r.suggested|money }} ر.س{{ ' · محفوظ' if r.saved else ' · لسه ما اتحفظش' }}</span>
+      </label>
+      {% endfor %}
+      <button class="btn primary block" type="submit">حفظ الأهداف</button>
+    </form>
+    {% else %}
+    <p class="muted">تعديل الأهداف متاح للمالك والمدير فقط.</p>
+    {% endif %}
+  </section>
+</div>
+{% endblock %}

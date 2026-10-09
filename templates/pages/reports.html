@@ -179,8 +179,8 @@
   </table>
 </section>
 
-<div class="grid-{{ 3 if stores_split else 2 }} spaced">
-  {% for title, rows, ic in [('المبيعات حسب المدينة', cities, 'pin'), ('طرق الدفع', payments, 'card')] + ([('توزيع المتاجر', stores_split, 'boxes')] if stores_split else []) %}
+<div class="grid-{{ 2 if stores_split else 3 }} spaced">
+  {% for title, rows, ic in [('المبيعات حسب المدينة', cities, 'pin'), ('طرق الدفع', payments, 'card'), ('قنوات البيع', sources, 'megaphone')] + ([('توزيع المتاجر', stores_split, 'boxes')] if stores_split else []) %}
   <section class="card">
     <div class="card-head"><h2>{{ title }}</h2><span class="kpi-icon">{{ icon(ic, 18) }}</span></div>
     <ul class="share-list">
@@ -197,6 +197,24 @@
   </section>
   {% endfor %}
 </div>
+
+<section class="card flush">
+  <div class="card-head padded"><div><h2>شركات الشحن</h2><p class="muted small">متأخر = التوصيل أكتر من {{ sla }} أيام</p></div><span class="kpi-icon">{{ icon('truck', 18) }}</span></div>
+  <table class="data-table">
+    <thead><tr><th>الشركة</th><th class="end">الطلبات</th><th class="end">متوسط التكلفة</th><th class="end">متوسط التوصيل</th><th>نسبة التأخير</th></tr></thead>
+    <tbody>
+      {% for c in carriers %}
+      <tr>
+        <td><strong>{{ c.name }}</strong></td>
+        <td class="end num">{{ c.orders|money }}</td>
+        <td class="end num">{{ c.avg_cost|money(1) }} <small class="muted">ر.س</small></td>
+        <td class="end num">{{ c.avg_days|round(1) }} <small class="muted">يوم</small></td>
+        <td class="meter-cell"><div class="meter-inline"><div class="meter thin"><span class="{{ 'danger' if c.late_rate > 25 else ('warn' if c.late_rate > 12 else 'ok') }}" style="--w: {{ c.late_rate|round(1) }}%"></span></div><span class="num small">{{ c.late_rate|round|int }}%</span></div></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
 
 <p class="muted small assumptions">
   {{ icon('alert', 14) }}

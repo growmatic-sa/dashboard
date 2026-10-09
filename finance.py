@@ -48,3 +48,37 @@ def carrier_cost(city):
 def payment_fee(method, amount):
     pct, flat = PAYMENT_FEES.get(method, (0, 0))
     return amount * pct + flat
+
+
+# ---------- شركات الشحن ----------
+# factor: مضاعف على تكلفة المدينة · days: مدى أيام التوصيل المعتاد
+CARRIERS = {
+    "سمسا": {"factor": 1.00, "days": (1, 4)},
+    "أرامكس": {"factor": 1.12, "days": (2, 5)},
+    "سبل": {"factor": 0.85, "days": (2, 8)},
+    "ريدبوكس": {"factor": 0.78, "days": (1, 4)},
+}
+# أكتر من كده يعتبر الطلب متأخر
+DELIVERY_SLA_DAYS = 4
+# طلب "قيد التجهيز" أكتر من كده يعتبر متأخر في التجهيز
+PROCESSING_SLA_DAYS = 2
+
+
+def carrier_cost_for(city, carrier):
+    return round(carrier_cost(city) * CARRIERS.get(carrier, {"factor": 1})["factor"], 2)
+
+
+# ---------- المخزون ----------
+LEAD_TIME_DAYS = 7       # مدة وصول البضاعة من المورد
+SAFETY_DAYS = 5          # مخزون أمان إضافي
+TARGET_COVER_DAYS = 30   # الكمية المقترحة تكفي كام يوم بعد وصولها
+
+# ---------- التسويق ----------
+AD_CHANNELS = ["سناب شات", "تيك توك", "انستقرام", "قوقل", "مؤثرين"]
+ORGANIC = "مباشر"
+
+# ---------- محاكي القرارات ----------
+# مرونة الطلب السعرية: رفع السعر 10% يقلل الكمية حوالي 13%
+PRICE_ELASTICITY = -1.3
+# العائد الإضافي من زيادة الإعلانات أقل من المتوسط الحالي (تناقص العائد)
+AD_MARGINAL_FACTOR = 0.65

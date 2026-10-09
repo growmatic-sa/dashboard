@@ -10,12 +10,14 @@ import envfile
 envfile.load()
 
 import db  # noqa: E402  (يجب أن يأتي بعد تحميل .env)
+import analytics as an
 import export
+import insights as ins
 import finance
 import reports
 import sample_data as sample
 from brands import PANEL, SERIES, brand_for
-from permissions import PAGES, ROLES, STORES, can_access_page
+from permissions import PAGES, ROLES, STORES, can_access_page, can_edit
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY") or secrets.token_hex(32)
@@ -122,7 +124,14 @@ def inject_globals():
         "role_names": ROLES,
         "store_names": STORES,
         "can_page": lambda page: bool(user) and can_access_page(user["role"], page),
+        "alerts": alerts_for(user, store),
     }
+
+
+def alerts_for(user, store):
+    if user is None or not can_access_page(user["role"], "insights"):
+        return []
+    return [i for i in ins.build(store, goal_for(store)) if i["severity"] in ("critical", "warning")]
 
 
 # ---------- auth ----------
@@ -171,6 +180,11 @@ PAGE_TEMPLATES = {
     "products": "pages/products.html",
     "inventory": "pages/inventory.html",
     "reports": "pages/reports.html",
+    "insights": "pages/insights.html",
+    "customers": "pages/customers.html",
+    "marketing": "pages/marketing.html",
+    "goals": "pages/goals.html",
+    "simulator": "pages/simulator.html",
     "settings": "pages/settings.html",
 }
 
@@ -188,13 +202,29 @@ def page(key):
     return render_template(template, key=key, title=PAGES[key]["label"], **ctx)
 
 
+def month_key():
+    return an.today().strftime("%Y-%m")
+
+
+def goal_for(store):
+    if store == "all":
+        return sum(goal_for(s) for s in ("smooth", "glorias"))
+    saved = db.get_goal(store, month_key())
+    return saved if saved is not None else an.suggested_target(store)
+
+
 def build_page_context(key, store):
     orders = sample.for_store(sample.ORDERS, store)
     products = sample.for_store(sample.PRODUCTS, store)
     low = sample.low_stock(products)
     if key == "dashboard":
         stores = ["smooth", "glorias"] if store == "all" else [store]
+        plan = an.inventory_plan(store)
+        needs = [p for p in plan if p["state"] in ("out", "reorder", "soon")]
         return {
+            "goal": an.month_progress(store, goal_for(store)),
+            "top_insights": [i for i in ins.build(store, goal_for(store)) if i["severity"] != "info"][:3],
+            "severity": ins.SEVERITY,
             "dash_data": {
                 "stores": [
                     {"key": s, "name": STORES[s], "color": SERIES[s]} for s in stores
@@ -202,8 +232,8 @@ def build_page_context(key, store):
                 "daily": sample.DAILY,
             },
             "recent_orders": orders[:5],
-            "low_stock": sorted(low, key=lambda p: p["stock"])[:5],
-            "low_count": len(low),
+            "low_stock": needs[:5],
+            "low_count": len([p for p in plan if p["state"] in ("out", "reorder")]),
             "top_products": sorted(products, key=lambda p: p["sold"], reverse=True)[:5],
             "status_counts": sample.status_counts(orders),
             "statuses": sample.STATUSES,
@@ -226,15 +256,60 @@ def build_page_context(key, store):
             "current": r["period"]["key"],
         }
         r["finance_vat"] = finance.VAT_RATE
+        r["sla"] = finance.DELIVERY_SLA_DAYS
         return r
     if key == "settings":
         return {"finance": finance}
     if key == "inventory":
+        plan = an.inventory_plan(store)
         return {
-            "products": sorted(products, key=lambda p: p["stock"]),
-            "low": low,
-            "out": [p for p in products if p["stock"] == 0],
+            "plan": plan,
+            "counts": {st: len([p for p in plan if p["state"] == st]) for st in ("out", "reorder", "soon", "ok", "over")},
+            "cash_needed": sum(p["reorder_cash"] for p in plan),
+            "stock_value": sum(p["stock"] * p["cost"] for p in plan),
+            "lead_time": finance.LEAD_TIME_DAYS,
+            "cover_target": finance.TARGET_COVER_DAYS,
         }
+    if key == "insights":
+        return {
+            "items": ins.build(store, goal_for(store)),
+            "severity": ins.SEVERITY,
+            "brief": ins.morning_brief(store),
+            "abc": an.abc(store),
+            "pairs": an.basket_pairs(store),
+        }
+    if key == "customers":
+        custs = an.customers(store)
+        return {
+            "segments": an.segment_summary(custs),
+            "cohorts": an.cohorts(store),
+            "stats": an.repeat_stats(custs),
+            "total_customers": len(custs),
+            "top": sorted(custs, key=lambda c: c["spent"], reverse=True)[:10],
+            "at_risk": sorted([c for c in custs if c["segment"] == "at_risk"], key=lambda c: c["spent"], reverse=True)[:10],
+        }
+    if key == "marketing":
+        window = request.args.get("days", "30")
+        window = int(window) if window in ("7", "30", "90") else 30
+        return {
+            "window": window,
+            "mk": an.marketing(store, window),
+            "coupons": an.coupons(store, window),
+            "heat": an.heatmap(store, max(window, 30)),
+        }
+    if key == "goals":
+        stores = ["smooth", "glorias"] if store == "all" else [store]
+        return {
+            "goal_rows": [
+                {"store": s, "progress": an.month_progress(s, goal_for(s)), "history": an.monthly_history(s),
+                 "suggested": an.suggested_target(s), "saved": db.get_goal(s, month_key()) is not None}
+                for s in stores
+            ],
+            "total": an.month_progress(store, goal_for(store)) if store == "all" else None,
+            "editable": can_edit(current_user()["role"], "goals"),
+        }
+    if key == "simulator":
+        return {"sim": an.simulator_baseline(store), "sim_stores": ["smooth", "glorias"] if store == "all" else [store]}
     return {}
 
 
@@ -254,6 +329,54 @@ def reports_export():
     data = export.build_xlsx(r, label, STORES, brand_for(store)["light"]["fill"])
     return Response(data, mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                     headers={"Content-Disposition": f"attachment; filename={filename}.xlsx"})
+
+
+@app.route("/goals", methods=["POST"])
+@page_required("goals")
+def goals_save():
+    user = current_user()
+    if not can_edit(user["role"], "goals"):
+        abort(403)
+    allowed = ["smooth", "glorias"] if user["store"] == "all" else [user["store"]]
+    for s in allowed:
+        raw = request.form.get(f"target_{s}", "").replace(",", "").strip()
+        if not raw:
+            continue
+        try:
+            value = float(raw)
+        except ValueError:
+            flash("اكتب الهدف أرقام بس.", "error")
+            return redirect(url_for("page", key="goals"))
+        if value <= 0 or value > 100_000_000:
+            flash("قيمة الهدف غير منطقية.", "error")
+            return redirect(url_for("page", key="goals"))
+        db.set_goal(s, month_key(), value, user["id"])
+        db.log_action(user["id"], "goal_set", f"هدف {STORES[s]} لشهر {month_key()}: {value:,.0f}")
+    flash("تم حفظ الأهداف.", "ok")
+    return redirect(url_for("page", key="goals"))
+
+
+@app.route("/customers/export")
+@page_required("customers")
+def customers_export():
+    user = current_user()
+    store = selected_store(user)
+    segment = request.args.get("segment", "")
+    custs = an.customers(store)
+    if segment in an.SEGMENTS:
+        custs = [c for c in custs if c["segment"] == segment]
+    custs.sort(key=lambda c: c["spent"], reverse=True)
+    import csv, io
+    buf = io.StringIO()
+    buf.write("\ufeff")
+    w = csv.writer(buf)
+    w.writerow(["العميل", "المتجر", "المدينة", "الشريحة", "عدد الطلبات", "إجمالي الإنفاق", "آخر طلب", "أيام من آخر طلب"])
+    for c in custs:
+        w.writerow([c["name"], STORES[c["store"]], c["city"], an.SEGMENTS[c["segment"]]["label"], c["orders"],
+                    round(c["spent"], 2), c["last"], c["recency"]])
+    db.log_action(user["id"], "customers_exported", f"تصدير عملاء: {segment or 'الكل'} — {STORES[store]}")
+    return Response(buf.getvalue().encode("utf-8"), mimetype="text/csv; charset=utf-8",
+                    headers={"Content-Disposition": f"attachment; filename=customers-{store}-{segment or 'all'}.csv"})
 
 
 # ---------- users (owner/manager only) ----------

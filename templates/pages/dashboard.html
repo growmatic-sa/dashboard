@@ -78,6 +78,45 @@
     {% if can_page('reports') %}<a class="link small fin-link" href="{{ url_for('page', key='reports') }}">التقارير {{ icon('arrow', 14) }}</a>{% endif %}</div>
 </section>
 
+{% set tone = {"critical": "danger", "warning": "warn", "opportunity": "brand", "info": "info"} %}
+<div class="grid-main">
+  <section class="card">
+    <div class="card-head">
+      <div><h2>أهم التوصيات الآن</h2><p class="muted small">مرتّبة حسب الأهمية والأثر</p></div>
+      {% if can_page('insights') %}<a class="link small" href="{{ url_for('page', key='insights') }}">كل التوصيات {{ icon('arrow', 14) }}</a>{% endif %}
+    </div>
+    <ul class="mini-insights">
+      {% for i in top_insights %}
+      <li class="tone-{{ tone[i.severity] }}">
+        <span class="mini-insight-ic">{{ icon(severity[i.severity].icon, 16) }}</span>
+        <div class="feed-body">
+          <div class="feed-title">{{ i.title }}</div>
+          <div class="muted small">{{ i.area }}{% if i.impact %} · أثر تقديري {{ i.impact|money }} ر.س شهرياً{% endif %}</div>
+        </div>
+        <span class="badge {{ tone[i.severity] }}">{{ severity[i.severity].label }}</span>
+      </li>
+      {% endfor %}
+    </ul>
+  </section>
+
+  <section class="card goal-mini">
+    {% set on_track = goal.projected_pct >= 97 %}
+    <div class="card-head">
+      <div><h2>هدف {{ goal.month_label }}</h2><p class="muted small">مضى {{ goal.elapsed }} من {{ goal.days_in_month }} يوم</p></div>
+      <span class="badge {{ 'ok' if on_track else 'warn' }}">{{ 'على الطريق' if on_track else 'متأخر' }}</span>
+    </div>
+    <div class="goal-ring" style="--p: {{ [goal.pct, 100]|min|round(1) }}">
+      <div><strong class="num">{{ goal.pct|round|int }}%</strong><span class="muted small">من {{ goal.target|money }}</span></div>
+    </div>
+    <dl class="facts compact">
+      <div><dt>المحقق</dt><dd class="num">{{ goal.mtd|money }} ر.س</dd></div>
+      <div><dt>التوقع لنهاية الشهر</dt><dd class="num {{ '' if on_track else 'neg' }}">{{ goal.projected|money }} ر.س</dd></div>
+      <div><dt>المطلوب يومياً</dt><dd class="num">{{ goal.required_daily|money }} ر.س</dd></div>
+    </dl>
+    {% if can_page('goals') %}<a class="link small" href="{{ url_for('page', key='goals') }}">تفاصيل الأهداف {{ icon('arrow', 14) }}</a>{% endif %}
+  </section>
+</div>
+
 <div class="grid-main">
   <section class="card chart-card">
     <div class="card-head">
@@ -167,12 +206,12 @@
     <ul class="alerts">
       {% for p in low_stock %}
       <li>
-        <span class="alert-ic {{ 'danger' if p.stock == 0 else 'warn' }}">{{ icon('alert', 16) }}</span>
+        <span class="alert-ic {{ 'danger' if p.state in ('out', 'reorder') else 'warn' }}">{{ icon('alert', 16) }}</span>
         <div class="feed-body">
           <div class="feed-title">{{ p.name }}</div>
           <div class="muted small">{{ store_names[p.store] }}</div>
         </div>
-        <span class="badge {{ 'danger' if p.stock == 0 else 'warn' }}">{{ 'نفد' if p.stock == 0 else 'باقي ' ~ p.stock }}</span>
+        <span class="badge {{ 'danger' if p.state in ('out', 'reorder') else 'warn' }}">{{ 'نفد' if p.stock == 0 else 'يكفي ' ~ (p.cover|round|int) ~ ' يوم' }}</span>
       </li>
       {% else %}
       <li class="empty">{{ icon('check', 18) }} كل المنتجات متوفرة</li>

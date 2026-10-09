@@ -20,6 +20,15 @@ CREATE TABLE IF NOT EXISTS users (
     created_at TEXT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS goals (
+    store TEXT NOT NULL,
+    month TEXT NOT NULL,
+    target REAL NOT NULL,
+    updated_by INTEGER,
+    updated_at TEXT NOT NULL,
+    PRIMARY KEY (store, month)
+);
+
 CREATE TABLE IF NOT EXISTS audit_log (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER,
@@ -115,3 +124,19 @@ def seed_owner_if_empty():
         raise SystemExit("لازم تضبط OWNER_EMAIL و OWNER_PASSWORD (8 أحرف على الأقل) في ملف .env قبل أول تشغيل.")
     create_user("المالك", email, generate_password_hash(password, method="pbkdf2:sha256"), "owner", "all")
     log_action(None, "owner_seeded", f"إنشاء حساب المالك: {email}")
+
+
+def get_goal(store, month):
+    row = get_conn().execute("SELECT target FROM goals WHERE store = ? AND month = ?", (store, month)).fetchone()
+    return row["target"] if row else None
+
+
+def set_goal(store, month, target, user_id):
+    conn = get_conn()
+    conn.execute(
+        "INSERT INTO goals (store, month, target, updated_by, updated_at) VALUES (?, ?, ?, ?, ?) "
+        "ON CONFLICT(store, month) DO UPDATE SET target = excluded.target, updated_by = excluded.updated_by, "
+        "updated_at = excluded.updated_at",
+        (store, month, target, user_id, now()),
+    )
+    conn.commit()
