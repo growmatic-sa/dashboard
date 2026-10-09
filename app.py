@@ -19,13 +19,48 @@ import sample_data as sample
 from brands import PANEL, SERIES, brand_for
 from permissions import PAGES, ROLES, STORES, can_access_page, can_edit
 
+PRODUCTION = os.environ.get("APP_ENV") == "production"
+
 app = Flask(__name__)
-app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY") or secrets.token_hex(32)
+secret = os.environ.get("SECRET_KEY")
+if PRODUCTION and (not secret or len(secret) < 32):
+    # بدون مفتاح ثابت كل عملية تشغيل هيكون لها مفتاح مختلف والمستخدمين هيخرجوا من حساباتهم
+    raise SystemExit("SECRET_KEY لازم يكون مضبوط (32 حرف على الأقل) في بيئة الإنتاج.")
+app.config["SECRET_KEY"] = secret or secrets.token_hex(32)
 app.config["SESSION_COOKIE_HTTPONLY"] = True
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
-app.config["SESSION_COOKIE_SECURE"] = os.environ.get("COOKIE_SECURE", "0") == "1"
+app.config["SESSION_COOKIE_SECURE"] = PRODUCTION or os.environ.get("COOKIE_SECURE", "0") == "1"
+app.config["PERMANENT_SESSION_LIFETIME"] = 60 * 60 * 12  # 12 ساعة
+
+if PRODUCTION:
+    # الاستضافة بتمرّر الطلبات عن طريق بروكسي، فناخد البروتوكول والـ IP الحقيقي منه
+    from werkzeug.middleware.proxy_fix import ProxyFix
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
 
 db.init_app(app)
+with app.app_context():
+    if os.environ.get("OWNER_EMAIL"):
+        db.seed_owner_if_empty()
+
+# قفل مؤقت بعد محاولات دخول فاشلة
+MAX_FAILED_LOGINS = 5
+LOCKOUT_MINUTES = 15
+
+
+@app.after_request
+def security_headers(resp):
+    resp.headers.setdefault("X-Content-Type-Options", "nosniff")
+    resp.headers.setdefault("X-Frame-Options", "DENY")
+    resp.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
+    resp.headers.setdefault("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
+    if PRODUCTION:
+        resp.headers.setdefault("Strict-Transport-Security", "max-age=31536000; includeSubDomains")
+    return resp
+
+
+@app.route("/healthz")
+def healthz():
+    return {"ok": True}
 
 
 @app.template_filter("money")
@@ -141,14 +176,22 @@ def login():
     if request.method == "POST":
         email = request.form.get("email", "").strip().lower()
         password = request.form.get("password", "")
+        ip = request.remote_addr or ""
+        if db.recent_failed_logins(email, ip, LOCKOUT_MINUTES) >= MAX_FAILED_LOGINS:
+            db.log_action(None, "login_locked", f"محاولة أثناء القفل: {email} من {ip}")
+            flash(f"محاولات كتير غلط. استنى {LOCKOUT_MINUTES} دقيقة وجرّب تاني.", "error")
+            return render_template("login.html"), 429
         user = db.get_user_by_email(email)
         if user and user["active"] and check_password_hash(user["password_hash"], password):
+            db.clear_failed_logins(email, ip)
             session.clear()
+            session.permanent = True
             session["user_id"] = user["id"]
             session["csrf"] = secrets.token_hex(16)
-            db.log_action(user["id"], "login", "تسجيل دخول")
+            db.log_action(user["id"], "login", f"تسجيل دخول من {ip}")
             return redirect(url_for("index"))
-        db.log_action(None, "login_failed", f"محاولة فاشلة: {email}")
+        db.record_failed_login(email, ip)
+        db.log_action(None, "login_failed", f"محاولة فاشلة: {email} من {ip}")
         flash("البريد أو كلمة المرور غير صحيحة.", "error")
     return render_template("login.html")
 
@@ -451,7 +494,7 @@ def bad_request(e):
 
 if __name__ == "__main__":
     with app.app_context():
-        db.seed_owner_if_empty()
+        db.seed_owner_if_empty()  # محلياً: يوقف التشغيل لو بيانات المالك مش موجودة
     app.run(
         host=os.environ.get("HOST", "127.0.0.1"),
         port=int(os.environ.get("PORT", 8000)),

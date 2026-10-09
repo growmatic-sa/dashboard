@@ -1,0 +1,28 @@
+# إعدادات النشر على Render (Blueprint)
+services:
+  - type: web
+    name: growmatic-dashboard
+    runtime: python
+    plan: starter            # الخطة المدفوعة مطلوبة عشان المساحة الدائمة لقاعدة البيانات
+    region: frankfurt        # الأقرب للسعودية من مناطق Render
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --preload --workers 2 --threads 4 --bind 0.0.0.0:$PORT --timeout 60 --access-logfile -
+    healthCheckPath: /healthz
+    autoDeploy: true
+    disk:
+      name: data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      - key: DB_PATH
+        value: /var/data/dashboard.db
+      - key: SECRET_KEY
+        generateValue: true
+      - key: OWNER_EMAIL
+        sync: false
+      - key: OWNER_PASSWORD
+        sync: false

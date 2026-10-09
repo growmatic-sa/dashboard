@@ -1,6 +1,6 @@
 import os
 import sqlite3
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 from flask import g
 from werkzeug.security import generate_password_hash
@@ -29,6 +29,14 @@ CREATE TABLE IF NOT EXISTS goals (
     PRIMARY KEY (store, month)
 );
 
+CREATE TABLE IF NOT EXISTS failed_logins (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    email TEXT NOT NULL,
+    ip TEXT NOT NULL,
+    created_at TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_failed_logins ON failed_logins (email, ip, created_at);
+
 CREATE TABLE IF NOT EXISTS audit_log (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER,
@@ -49,6 +57,8 @@ def get_conn():
         conn = sqlite3.connect(DB_PATH)
         conn.row_factory = sqlite3.Row
         conn.execute("PRAGMA foreign_keys = ON")
+        conn.execute("PRAGMA journal_mode = WAL")  # قراءة وكتابة من أكتر من عملية في نفس الوقت
+        conn.execute("PRAGMA busy_timeout = 5000")
         g.conn = conn
     return g.conn
 
@@ -122,7 +132,10 @@ def seed_owner_if_empty():
     password = os.environ.get("OWNER_PASSWORD", "")
     if not email or len(password) < 8:
         raise SystemExit("لازم تضبط OWNER_EMAIL و OWNER_PASSWORD (8 أحرف على الأقل) في ملف .env قبل أول تشغيل.")
-    create_user("المالك", email, generate_password_hash(password, method="pbkdf2:sha256"), "owner", "all")
+    try:
+        create_user("المالك", email, generate_password_hash(password, method="pbkdf2:sha256"), "owner", "all")
+    except sqlite3.IntegrityError:
+        return  # عملية تانية سبقتنا وأنشأته
     log_action(None, "owner_seeded", f"إنشاء حساب المالك: {email}")
 
 
@@ -139,4 +152,28 @@ def set_goal(store, month, target, user_id):
         "updated_at = excluded.updated_at",
         (store, month, target, user_id, now()),
     )
+    conn.commit()
+
+
+def record_failed_login(email, ip):
+    conn = get_conn()
+    conn.execute("INSERT INTO failed_logins (email, ip, created_at) VALUES (?, ?, ?)", (email, ip, now()))
+    conn.commit()
+
+
+def recent_failed_logins(email, ip, minutes):
+    """عدد المحاولات الفاشلة لنفس الإيميل أو من نفس الـ IP في آخر عدد دقايق."""
+    since = (datetime.now(timezone.utc) - timedelta(minutes=minutes)).isoformat(timespec="seconds")
+    row = get_conn().execute(
+        "SELECT MAX(by_email, by_ip) FROM ("
+        " SELECT (SELECT COUNT(*) FROM failed_logins WHERE email = ? AND created_at >= ?) AS by_email,"
+        " (SELECT COUNT(*) FROM failed_logins WHERE ip = ? AND created_at >= ?) / 3 AS by_ip)",
+        (email, since, ip, since),
+    ).fetchone()
+    return row[0] or 0
+
+
+def clear_failed_logins(email, ip):
+    conn = get_conn()
+    conn.execute("DELETE FROM failed_logins WHERE email = ? OR ip = ?", (email, ip))
     conn.commit()
