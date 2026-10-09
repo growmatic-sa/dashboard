@@ -5,7 +5,10 @@ from functools import wraps
 from flask import Flask, abort, flash, g, redirect, render_template, request, session, url_for
 from werkzeug.security import check_password_hash, generate_password_hash
 
-import db
+import envfile
+envfile.load()
+
+import db  # noqa: E402  (يجب أن يأتي بعد تحميل .env)
 from permissions import PAGES, ROLES, STORES, can_access_page
 
 app = Flask(__name__)
@@ -202,6 +205,6 @@ if __name__ == "__main__":
         db.seed_owner_if_empty()
     app.run(
         host=os.environ.get("HOST", "127.0.0.1"),
-        port=int(os.environ.get("PORT", 5000)),
+        port=int(os.environ.get("PORT", 8000)),
         debug=False,
     )
