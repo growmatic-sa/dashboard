@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>سجل النشاط</h1>
+<div class="card">
+  <table>
+    <thead>
+      <tr><th>الوقت</th><th>المستخدم</th><th>الإجراء</th><th>التفاصيل</th></tr>
+    </thead>
+    <tbody>
+      {% for log in logs %}
+      <tr>
+        <td dir="ltr">{{ log.created_at }}</td>
+        <td>{{ log.user_email or '—' }}</td>
+        <td>{{ log.action }}</td>
+        <td>{{ log.details }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="4" class="muted">لا يوجد نشاط بعد.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

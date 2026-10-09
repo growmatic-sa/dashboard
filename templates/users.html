@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>المستخدمون</h1>
+
+<div class="card">
+  <h2>إضافة مستخدم</h2>
+  <form method="post" action="{{ url_for('users_new') }}" class="grid-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label>الاسم <input type="text" name="name" required></label>
+    <label>البريد الإلكتروني <input type="email" name="email" required></label>
+    <label>كلمة المرور (8 أحرف على الأقل) <input type="password" name="password" minlength="8" required></label>
+    <label>الدور
+      <select name="role">
+        {% for key, label in role_names.items() %}
+          {% if key != 'owner' or current_user.role == 'owner' %}
+            <option value="{{ key }}">{{ label }}</option>
+          {% endif %}
+        {% endfor %}
+      </select>
+    </label>
+    <label>المتجر
+      <select name="store">
+        {% for key, label in store_names.items() %}
+          <option value="{{ key }}">{{ label }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <div><button class="btn primary" type="submit">إضافة</button></div>
+  </form>
+</div>
+
+<div class="card">
+  <table>
+    <thead>
+      <tr><th>الاسم</th><th>البريد</th><th>الدور</th><th>المتجر</th><th>الحالة</th><th></th></tr>
+    </thead>
+    <tbody>
+      {% for u in users %}
+      <tr>
+        <td>{{ u.name }}</td>
+        <td>{{ u.email }}</td>
+        <td>{{ role_names[u.role] }}</td>
+        <td>{{ store_names[u.store] }}</td>
+        <td>{{ 'مفعّل' if u.active else 'موقوف' }}</td>
+        <td>
+          {% if u.id != current_user.id %}
+          <form method="post" action="{{ url_for('users_toggle', user_id=u.id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="btn ghost" type="submit">{{ 'إيقاف' if u.active else 'تفعيل' }}</button>
+          </form>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

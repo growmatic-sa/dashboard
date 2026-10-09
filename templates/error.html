@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>خطأ {{ code }}</h1>
+<div class="card">
+  <p>{{ message }}</p>
+  <a class="btn ghost" href="{{ url_for('index') if current_user else url_for('login') }}">الرجوع</a>
+</div>
+{% endblock %}
+{% block public %}
+<div class="login-wrap">
+  <div class="login-card">
+    <h1>خطأ {{ code }}</h1>
+    <p>{{ message }}</p>
+    <a class="btn ghost" href="{{ url_for('login') }}">تسجيل الدخول</a>
+  </div>
+</div>
+{% endblock %}

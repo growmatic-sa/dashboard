@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ title }}</h1>
+<div class="card">
+  <p>هذه الصفحة قيد الإعداد. سيتم ربطها ببيانات سلة في المرحلة القادمة.</p>
+  <p class="muted">المتجر المعروض لك: {{ store_names[current_user.store] }}</p>
+</div>
+{% endblock %}

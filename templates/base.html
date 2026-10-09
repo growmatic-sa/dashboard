@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ title or "لوحة التحكم" }} | لوحة المتاجر</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+{% if current_user %}
+<div class="layout">
+  <aside class="sidebar">
+    <div class="brand">لوحة المتاجر</div>
+    <nav>
+      {% for key, page in pages.items() %}
+        {% if can_page(key) %}
+          <a href="{{ url_for('page', key=key) }}" class="{{ 'active' if request.endpoint == 'page' and request.view_args.key == key else '' }}">{{ page.label }}</a>
+        {% endif %}
+      {% endfor %}
+      {% if can_page('users') %}
+        <a href="{{ url_for('users') }}" class="{{ 'active' if request.endpoint in ('users', 'audit') else '' }}">المستخدمون</a>
+        <a href="{{ url_for('audit') }}" class="{{ 'active' if request.endpoint == 'audit' else '' }}">سجل النشاط</a>
+      {% endif %}
+    </nav>
+    <div class="me">
+      <div>{{ current_user.name }}</div>
+      <div class="muted">{{ role_names[current_user.role] }}</div>
+      <form method="post" action="{{ url_for('logout') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button class="btn ghost" type="submit">تسجيل الخروج</button>
+      </form>
+    </div>
+  </aside>
+  <main class="content">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+        <div class="flash {{ category }}">{{ message }}</div>
+      {% endfor %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+</div>
+{% else %}
+  {% block public %}{% endblock %}
+{% endif %}
+</body>
+</html>

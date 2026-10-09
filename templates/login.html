@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block public %}
+<div class="login-wrap">
+  <form class="login-card" method="post" action="{{ url_for('login') }}">
+    <h1>تسجيل الدخول</h1>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+        <div class="flash {{ category }}">{{ message }}</div>
+      {% endfor %}
+    {% endwith %}
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label>البريد الإلكتروني
+      <input type="email" name="email" required autofocus autocomplete="username">
+    </label>
+    <label>كلمة المرور
+      <input type="password" name="password" required autocomplete="current-password">
+    </label>
+    <button class="btn primary" type="submit">دخول</button>
+  </form>
+</div>
+{% endblock %}
