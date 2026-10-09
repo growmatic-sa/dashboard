@@ -4,7 +4,7 @@
   --text: #1d2330;
   --muted: #6b7280;
   --line: #e3e6ec;
-  --accent: #2563eb;
+  --accent: var(--brand, #313131);
   --danger: #dc2626;
   --ok: #16a34a;
 }
@@ -41,7 +41,8 @@ body {
   gap: 16px;
 }
 
-.brand { font-weight: 700; font-size: 1.15rem; }
+.brand { font-weight: 700; font-size: 1.15rem; display: flex; align-items: center; gap: 10px; }
+.brand-logo { height: 36px; width: auto; max-width: 120px; object-fit: contain; border-radius: 6px; background: #fff; padding: 2px; }
 
 .sidebar nav { display: flex; flex-direction: column; gap: 4px; }
 .sidebar nav a {

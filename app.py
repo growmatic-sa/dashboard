@@ -9,6 +9,7 @@ import envfile
 envfile.load()
 
 import db  # noqa: E402  (يجب أن يأتي بعد تحميل .env)
+from brands import brand_for
 from permissions import PAGES, ROLES, STORES, can_access_page
 
 app = Flask(__name__)
@@ -71,6 +72,7 @@ def check_csrf():
 def inject_globals():
     user = current_user()
     return {
+        "brand": brand_for(user["store"]) if user else brand_for("all"),
         "csrf_token": csrf_token,
         "current_user": user,
         "pages": PAGES,
