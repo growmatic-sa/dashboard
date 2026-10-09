@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>المخزون</h1>
+    <p class="muted">{{ low|length }} منتج يحتاج متابعة</p>
+  </div>
+  <span class="demo-badge">بيانات تجريبية للعرض</span>
+</div>
+
+<div class="card">
+  <table>
+    <thead>
+      <tr><th>المنتج</th><th>المتجر</th><th>الكمية الحالية</th><th>مستوى المخزون</th><th>الحالة</th></tr>
+    </thead>
+    <tbody>
+      {% for p in products %}
+      {% set pct = [p.stock * 100 // 50, 100] | min %}
+      <tr>
+        <td>{{ p.name }}</td>
+        <td><span class="store-tag {{ p.store }}">{{ store_names[p.store] }}</span></td>
+        <td>{{ p.stock }}</td>
+        <td class="bar-cell"><div class="progress"><div class="{{ 'low' if p.stock <= 10 else '' }}" style="width: {{ pct }}%"></div></div></td>
+        <td>
+          {% if p.stock == 0 %}<span class="badge danger">نفد</span>
+          {% elif p.stock <= 10 %}<span class="badge warn">منخفض</span>
+          {% else %}<span class="badge ok">متوفر</span>{% endif %}
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="5" class="muted">لا توجد منتجات.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

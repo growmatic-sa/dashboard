@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{{ title or "لوحة التحكم" }} | لوحة المتاجر</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=2">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=3">
   <style>:root { --brand: {{ brand.color }}; }</style>
 </head>
 <body>
@@ -29,6 +29,7 @@
       {% endif %}
     </nav>
     <div class="me">
+      <div class="avatar">{{ current_user.name[:1] }}</div>
       <div>{{ current_user.name }}</div>
       <div class="muted">{{ role_names[current_user.role] }}</div>
       <form method="post" action="{{ url_for('logout') }}">

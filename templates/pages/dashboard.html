@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>الرئيسية</h1>
+    <p class="muted">نظرة عامة على {{ store_names[current_user.store] }}</p>
+  </div>
+  <span class="demo-badge">بيانات تجريبية للعرض</span>
+</div>
+
+<section class="stats">
+  <div class="stat">
+    <div class="stat-label">إجمالي المبيعات</div>
+    <div class="stat-value">{{ "{:,}".format(stats.revenue) }} <small>ر.س</small></div>
+    <div class="stat-foot ok">+12% عن الأسبوع الماضي</div>
+  </div>
+  <div class="stat">
+    <div class="stat-label">عدد الطلبات</div>
+    <div class="stat-value">{{ stats.orders }}</div>
+    <div class="stat-foot ok">+5 طلبات اليوم</div>
+  </div>
+  <div class="stat">
+    <div class="stat-label">متوسط الطلب</div>
+    <div class="stat-value">{{ "{:,}".format(stats.avg) }} <small>ر.س</small></div>
+    <div class="stat-foot muted">آخر 7 أيام</div>
+  </div>
+  <div class="stat {{ 'alert' if stats.low else '' }}">
+    <div class="stat-label">منتجات قاربت على النفاد</div>
+    <div class="stat-value">{{ stats.low }}</div>
+    <div class="stat-foot {{ 'danger' if stats.low else 'muted' }}">{{ 'تحتاج تعبئة' if stats.low else 'المخزون مستقر' }}</div>
+  </div>
+</section>
+
+<div class="grid-2">
+  <section class="card">
+    <div class="card-head">
+      <h2>المبيعات خلال 7 أيام</h2>
+      <span class="muted">ر.س</span>
+    </div>
+    <div class="bars">
+      {% for d in week %}
+      <div class="bar-col">
+        <div class="bar-value">{{ "{:,}".format(d.value) }}</div>
+        <div class="bar" style="height: {{ d.pct }}%"></div>
+        <div class="bar-label">{{ d.day }}</div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="card-head">
+      <h2>تنبيهات المخزون</h2>
+      <a href="{{ url_for('page', key='inventory') }}" class="link">عرض الكل</a>
+    </div>
+    {% for p in low_stock %}
+    <div class="list-row">
+      <div>
+        <div class="row-title">{{ p.name }}</div>
+        <div class="muted small">{{ store_names[p.store] }}</div>
+      </div>
+      <span class="badge {{ 'danger' if p.stock == 0 else 'warn' }}">{{ 'نفد' if p.stock == 0 else p.stock ~ ' قطعة' }}</span>
+    </div>
+    {% else %}
+    <p class="muted">لا توجد تنبيهات حالياً.</p>
+    {% endfor %}
+  </section>
+</div>
+
+<div class="grid-2">
+  <section class="card">
+    <div class="card-head">
+      <h2>آخر الطلبات</h2>
+      <a href="{{ url_for('page', key='orders') }}" class="link">عرض الكل</a>
+    </div>
+    <table>
+      <thead><tr><th>رقم</th><th>العميل</th><th>المجموع</th><th>الحالة</th></tr></thead>
+      <tbody>
+        {% for o in recent_orders %}
+        <tr>
+          <td>#{{ o.id }}</td>
+          <td>{{ o.customer }}</td>
+          <td>{{ o.total }} ر.س</td>
+          <td><span class="badge {{ status_class[o.status] }}">{{ o.status }}</span></td>
+        </tr>
+        {% else %}
+        <tr><td colspan="4" class="muted">لا توجد طلبات.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+
+  <section class="card">
+    <div class="card-head">
+      <h2>الأكثر مبيعاً</h2>
+    </div>
+    {% set max_sold = top_products[0].sold if top_products else 1 %}
+    {% for p in top_products %}
+    <div class="progress-row">
+      <div class="progress-head">
+        <span>{{ p.name }}</span>
+        <span class="muted">{{ p.sold }} قطعة</span>
+      </div>
+      <div class="progress"><div style="width: {{ (p.sold / max_sold * 100) | round | int }}%"></div></div>
+    </div>
+    {% endfor %}
+  </section>
+</div>
+{% endblock %}

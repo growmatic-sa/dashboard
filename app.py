@@ -9,6 +9,7 @@ import envfile
 envfile.load()
 
 import db  # noqa: E402  (يجب أن يأتي بعد تحميل .env)
+import sample_data as sample
 from brands import brand_for
 from permissions import PAGES, ROLES, STORES, can_access_page
 
@@ -122,14 +123,55 @@ def index():
     abort(403)
 
 
+PAGE_TEMPLATES = {
+    "dashboard": "pages/dashboard.html",
+    "orders": "pages/orders.html",
+    "products": "pages/products.html",
+    "inventory": "pages/inventory.html",
+}
+
+
 @app.route("/p/<key>")
 @login_required
 def page(key):
     if key not in PAGES:
         abort(404)
-    if not can_access_page(current_user()["role"], key):
+    user = current_user()
+    if not can_access_page(user["role"], key):
         abort(403)
-    return render_template("page.html", key=key, title=PAGES[key]["label"])
+    template = PAGE_TEMPLATES.get(key, "page.html")
+    ctx = build_page_context(key, user["store"])
+    return render_template(template, key=key, title=PAGES[key]["label"], **ctx)
+
+
+def build_page_context(key, store):
+    orders = sample.for_store(sample.ORDERS, store)
+    products = sample.for_store(sample.PRODUCTS, store)
+    live_orders = [o for o in orders if o["status"] != "ملغي"]
+    revenue = sum(o["total"] for o in live_orders)
+    low = sample.low_stock(products)
+    if key == "dashboard":
+        peak = max(d["value"] for d in sample.SALES_WEEK)
+        return {
+            "stats": {
+                "revenue": revenue,
+                "orders": len(live_orders),
+                "avg": round(revenue / len(live_orders)) if live_orders else 0,
+                "low": len(low),
+            },
+            "week": [{**d, "pct": round(d["value"] / peak * 100)} for d in sample.SALES_WEEK],
+            "recent_orders": orders[:5],
+            "low_stock": low[:5],
+            "top_products": sorted(products, key=lambda p: p["sold"], reverse=True)[:4],
+            "status_class": sample.STATUS_CLASS,
+        }
+    if key == "orders":
+        return {"orders": orders, "status_class": sample.STATUS_CLASS}
+    if key == "products":
+        return {"products": products}
+    if key == "inventory":
+        return {"products": products, "low": low}
+    return {}
 
 
 # ---------- users (owner/manager only) ----------

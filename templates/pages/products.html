@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>المنتجات</h1>
+    <p class="muted">{{ products|length }} منتج</p>
+  </div>
+  <span class="demo-badge">بيانات تجريبية للعرض</span>
+</div>
+
+<div class="card">
+  <table>
+    <thead>
+      <tr><th>المنتج</th><th>المتجر</th><th>السعر</th><th>المباع</th><th>الحالة</th></tr>
+    </thead>
+    <tbody>
+      {% for p in products %}
+      <tr>
+        <td>{{ p.name }}</td>
+        <td><span class="store-tag {{ p.store }}">{{ store_names[p.store] }}</span></td>
+        <td>{{ p.price }} ر.س</td>
+        <td>{{ p.sold }}</td>
+        <td><span class="badge {{ 'ok' if p.status == 'active' else 'muted-badge' }}">{{ 'منشور' if p.status == 'active' else 'مسودة' }}</span></td>
+      </tr>
+      {% else %}
+      <tr><td colspan="5" class="muted">لا توجد منتجات.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

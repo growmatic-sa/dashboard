@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>الطلبات</h1>
+    <p class="muted">{{ orders|length }} طلب</p>
+  </div>
+  <span class="demo-badge">بيانات تجريبية للعرض</span>
+</div>
+
+<div class="card">
+  <div class="filters">
+    <button class="chip active">الكل</button>
+    <button class="chip">جديد</button>
+    <button class="chip">قيد التجهيز</button>
+    <button class="chip">تم الشحن</button>
+    <button class="chip">تم التسليم</button>
+    <button class="chip">ملغي</button>
+  </div>
+  <table>
+    <thead>
+      <tr><th>رقم الطلب</th><th>العميل</th><th>المتجر</th><th>المنتجات</th><th>المجموع</th><th>التاريخ</th><th>الحالة</th></tr>
+    </thead>
+    <tbody>
+      {% for o in orders %}
+      <tr>
+        <td>#{{ o.id }}</td>
+        <td>{{ o.customer }}</td>
+        <td><span class="store-tag {{ o.store }}">{{ store_names[o.store] }}</span></td>
+        <td>{{ o.items }}</td>
+        <td>{{ o.total }} ر.س</td>
+        <td>{{ o.date }}</td>
+        <td><span class="badge {{ status_class[o.status] }}">{{ o.status }}</span></td>
+      </tr>
+      {% else %}
+      <tr><td colspan="7" class="muted">لا توجد طلبات.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
