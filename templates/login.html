@@ -1,21 +1,44 @@
 {% extends "base.html" %}
+{% from "_icons.html" import panel_mark %}
 {% block public %}
-<div class="login-wrap">
-  <form class="login-card" method="post" action="{{ url_for('login') }}">
-    <h1>تسجيل الدخول</h1>
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% for category, message in messages %}
-        <div class="flash {{ category }}">{{ message }}</div>
-      {% endfor %}
-    {% endwith %}
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <label>البريد الإلكتروني
-      <input type="email" name="email" required autofocus autocomplete="username">
-    </label>
-    <label>كلمة المرور
-      <input type="password" name="password" required autocomplete="current-password">
-    </label>
-    <button class="btn primary" type="submit">دخول</button>
-  </form>
+<div class="auth">
+  <section class="auth-art">
+    <div class="auth-brand">
+      {{ panel_mark(44) }}
+      <div>
+        <div class="auth-name">{{ panel.name }}</div>
+        <div class="auth-tag">{{ panel.tagline }}</div>
+      </div>
+    </div>
+    <div class="auth-copy">
+      <h2>كل متاجرك في لوحة واحدة</h2>
+      <p>الطلبات والمخزون والمبيعات لسموذ وقلوريز، بصلاحيات واضحة لكل فرد في الفريق.</p>
+    </div>
+    <div class="auth-stores">
+      <div class="auth-store"><img src="{{ url_for('static', filename='brands/smooth-logo.webp') }}" alt="سموذ"></div>
+      <div class="auth-store"><img src="{{ url_for('static', filename='brands/glorias-logo.webp') }}" alt="قلوريز"></div>
+    </div>
+    <div class="auth-orb one"></div><div class="auth-orb two"></div>
+  </section>
+
+  <section class="auth-form-wrap">
+    <form class="auth-form" method="post" action="{{ url_for('login') }}">
+      <h1>تسجيل الدخول</h1>
+      <p class="muted">أدخل بياناتك للوصول إلى اللوحة</p>
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+          <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endwith %}
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <label class="field">البريد الإلكتروني
+        <input type="email" name="email" required autofocus autocomplete="username" dir="ltr">
+      </label>
+      <label class="field">كلمة المرور
+        <input type="password" name="password" required autocomplete="current-password" dir="ltr">
+      </label>
+      <button class="btn primary block lg" type="submit">دخول</button>
+    </form>
+  </section>
 </div>
 {% endblock %}

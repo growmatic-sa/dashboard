@@ -1,41 +1,88 @@
 {% extends "base.html" %}
+{% from "_icons.html" import icon %}
 {% block content %}
 <div class="page-head">
   <div>
     <h1>الطلبات</h1>
-    <p class="muted">{{ orders|length }} طلب</p>
+    <p class="muted"><span id="visible-count">{{ orders|length }}</span> من {{ orders|length }} طلب</p>
   </div>
   <span class="demo-badge">بيانات تجريبية للعرض</span>
 </div>
 
-<div class="card">
-  <div class="filters">
-    <button class="chip active">الكل</button>
-    <button class="chip">جديد</button>
-    <button class="chip">قيد التجهيز</button>
-    <button class="chip">تم الشحن</button>
-    <button class="chip">تم التسليم</button>
-    <button class="chip">ملغي</button>
+<div class="filter-row">
+  <div class="chips" id="status-filter" role="radiogroup" aria-label="فلترة حسب الحالة">
+    <button class="chip active" data-status="" role="radio" aria-checked="true">الكل <span class="chip-n">{{ orders|length }}</span></button>
+    {% for name, meta in statuses.items() %}
+      <button class="chip" data-status="{{ name }}" role="radio" aria-checked="false">
+        <span class="dot {{ meta[0] }}"></span>{{ name }} <span class="chip-n">{{ status_counts[name] }}</span>
+      </button>
+    {% endfor %}
   </div>
-  <table>
+</div>
+
+<div class="card flush">
+  <table class="data-table" id="orders-table">
     <thead>
-      <tr><th>رقم الطلب</th><th>العميل</th><th>المتجر</th><th>المنتجات</th><th>المجموع</th><th>التاريخ</th><th>الحالة</th></tr>
+      <tr><th>الطلب</th><th>العميل</th><th>المتجر</th><th>التاريخ</th><th>الدفع</th><th class="end">المجموع</th><th>الحالة</th></tr>
     </thead>
     <tbody>
       {% for o in orders %}
-      <tr>
-        <td>#{{ o.id }}</td>
-        <td>{{ o.customer }}</td>
+      <tr class="clickable" tabindex="0" data-id="{{ o.id }}" data-status="{{ o.status }}"
+          data-search="{{ o.id }} {{ o.customer }} {{ o.city }} {{ store_names[o.store] }}">
+        <td><strong>#{{ o.id }}</strong></td>
+        <td>
+          <div class="cell-user">
+            <span class="mini-avatar store-{{ o.store }}">{{ o.customer[:1] }}</span>
+            <div><div>{{ o.customer }}</div><div class="muted small">{{ o.city }}</div></div>
+          </div>
+        </td>
         <td><span class="store-tag {{ o.store }}">{{ store_names[o.store] }}</span></td>
-        <td>{{ o.items }}</td>
-        <td>{{ o.total }} ر.س</td>
-        <td>{{ o.date }}</td>
-        <td><span class="badge {{ status_class[o.status] }}">{{ o.status }}</span></td>
+        <td class="muted" data-date="{{ o.date }}">{{ o.date }}</td>
+        <td class="muted">{{ o.payment }}</td>
+        <td class="end num"><strong>{{ "{:,}".format(o.total) }}</strong> <small class="muted">ر.س</small></td>
+        <td><span class="badge {{ statuses[o.status][0] }}">{{ o.status }}</span></td>
       </tr>
-      {% else %}
-      <tr><td colspan="7" class="muted">لا توجد طلبات.</td></tr>
       {% endfor %}
     </tbody>
   </table>
+  <div class="empty-state" id="orders-empty" hidden>{{ icon('search', 28) }}<p>لا توجد طلبات مطابقة.</p></div>
 </div>
+
+<script type="application/json" id="orders-data">{{ {"orders": orders, "stores": store_names, "statuses": statuses}|tojson }}</script>
+{% endblock %}
+
+{% block overlay %}
+<div class="drawer-scrim" id="drawer-scrim" hidden></div>
+<aside class="drawer" id="drawer" aria-hidden="true" aria-labelledby="drawer-title" role="dialog">
+  <div class="drawer-head">
+    <div>
+      <div class="muted small">تفاصيل الطلب</div>
+      <h2 id="drawer-title"></h2>
+    </div>
+    <button class="icon-btn" id="drawer-close" aria-label="إغلاق">{{ icon('x') }}</button>
+  </div>
+  <div class="drawer-body">
+    <div class="drawer-meta">
+      <div><span class="muted small">العميل</span><strong id="d-customer"></strong></div>
+      <div><span class="muted small">المدينة</span><strong id="d-city"></strong></div>
+      <div><span class="muted small">المتجر</span><strong id="d-store"></strong></div>
+      <div><span class="muted small">طريقة الدفع</span><strong id="d-payment"></strong></div>
+    </div>
+
+    <h3>المنتجات</h3>
+    <ul class="line-items" id="d-lines"></ul>
+    <div class="line-total"><span>الإجمالي</span><strong id="d-total"></strong></div>
+
+    <h3>حالة الطلب</h3>
+    <ol class="timeline" id="d-timeline"></ol>
+
+    <label class="field">تغيير الحالة
+      <select id="d-status">
+        {% for name in statuses %}<option>{{ name }}</option>{% endfor %}
+      </select>
+    </label>
+    <button class="btn primary block" id="d-save">حفظ الحالة</button>
+    <p class="muted small center">في النسخة التجريبية التغيير لا يُحفظ في سلة.</p>
+  </div>
+</aside>
 {% endblock %}

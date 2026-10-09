@@ -1,14 +1,14 @@
 """تعريف الصفحات والأدوار والمتاجر. أي صلاحية جديدة تُضاف هنا."""
 
 PAGES = {
-    "dashboard": {"label": "الرئيسية"},
-    "orders": {"label": "الطلبات"},
-    "products": {"label": "المنتجات"},
-    "inventory": {"label": "المخزون"},
-    "customers": {"label": "العملاء"},
-    "reports": {"label": "التقارير"},
-    "settings": {"label": "الإعدادات"},
-    "users": {"label": "المستخدمون"},
+    "dashboard": {"label": "الرئيسية", "icon": "home", "group": "عام"},
+    "orders": {"label": "الطلبات", "icon": "bag", "group": "العمليات"},
+    "products": {"label": "المنتجات", "icon": "tag", "group": "العمليات"},
+    "inventory": {"label": "المخزون", "icon": "boxes", "group": "العمليات"},
+    "customers": {"label": "العملاء", "icon": "users", "group": "العمليات"},
+    "reports": {"label": "التقارير", "icon": "chart", "group": "التحليل"},
+    "settings": {"label": "الإعدادات", "icon": "gear", "group": "الإدارة"},
+    "users": {"label": "المستخدمون", "icon": "shield", "group": "الإدارة"},
 }
 
 ROLES = {

@@ -1,36 +1,57 @@
 {% extends "base.html" %}
+{% from "_icons.html" import icon %}
 {% block content %}
 <div class="page-head">
   <div>
     <h1>المخزون</h1>
-    <p class="muted">{{ low|length }} منتج يحتاج متابعة</p>
+    <p class="muted">تابع الكميات وعدّلها بسرعة</p>
   </div>
   <span class="demo-badge">بيانات تجريبية للعرض</span>
 </div>
 
-<div class="card">
-  <table>
+<section class="mini-stats">
+  <div class="mini-stat"><span class="mini-ic brand">{{ icon('boxes', 18) }}</span><div><strong class="num">{{ products|length }}</strong><span class="muted small">إجمالي المنتجات</span></div></div>
+  <div class="mini-stat"><span class="mini-ic warn">{{ icon('alert', 18) }}</span><div><strong class="num">{{ low|length - out|length }}</strong><span class="muted small">كمية منخفضة</span></div></div>
+  <div class="mini-stat"><span class="mini-ic danger">{{ icon('x', 18) }}</span><div><strong class="num">{{ out|length }}</strong><span class="muted small">نفد من المخزون</span></div></div>
+</section>
+
+<div class="filter-row">
+  <div class="chips" id="stock-filter" role="radiogroup" aria-label="فلترة المخزون">
+    <button class="chip active" data-filter="" role="radio" aria-checked="true">الكل</button>
+    <button class="chip" data-filter="low" role="radio" aria-checked="false"><span class="dot warn"></span>منخفض</button>
+    <button class="chip" data-filter="out" role="radio" aria-checked="false"><span class="dot danger"></span>نفد</button>
+    <button class="chip" data-filter="ok" role="radio" aria-checked="false"><span class="dot ok"></span>متوفر</button>
+  </div>
+</div>
+
+<div class="card flush">
+  <table class="data-table" id="stock-table">
     <thead>
-      <tr><th>المنتج</th><th>المتجر</th><th>الكمية الحالية</th><th>مستوى المخزون</th><th>الحالة</th></tr>
+      <tr><th>المنتج</th><th>المتجر</th><th>المستوى</th><th>الحالة</th><th class="center">الكمية</th></tr>
     </thead>
     <tbody>
       {% for p in products %}
-      {% set pct = [p.stock * 100 // 50, 100] | min %}
-      <tr>
-        <td>{{ p.name }}</td>
-        <td><span class="store-tag {{ p.store }}">{{ store_names[p.store] }}</span></td>
-        <td>{{ p.stock }}</td>
-        <td class="bar-cell"><div class="progress"><div class="{{ 'low' if p.stock <= 10 else '' }}" style="width: {{ pct }}%"></div></div></td>
+      <tr data-stock="{{ p.stock }}" data-search="{{ p.name }} {{ store_names[p.store] }}">
         <td>
-          {% if p.stock == 0 %}<span class="badge danger">نفد</span>
-          {% elif p.stock <= 10 %}<span class="badge warn">منخفض</span>
-          {% else %}<span class="badge ok">متوفر</span>{% endif %}
+          <div class="cell-user">
+            <span class="mini-thumb store-{{ p.store }}">{{ p.name[:1] }}</span>
+            <div><div>{{ p.name }}</div><div class="muted small">{{ p.category }}</div></div>
+          </div>
+        </td>
+        <td><span class="store-tag {{ p.store }}">{{ store_names[p.store] }}</span></td>
+        <td class="meter-cell"><div class="meter"><span data-meter></span></div></td>
+        <td data-state></td>
+        <td class="center">
+          <div class="stepper">
+            <button class="icon-btn sm" data-step="-1" aria-label="إنقاص">{{ icon('minus', 16) }}</button>
+            <output class="num" data-qty>{{ p.stock }}</output>
+            <button class="icon-btn sm" data-step="1" aria-label="زيادة">{{ icon('plus', 16) }}</button>
+          </div>
         </td>
       </tr>
-      {% else %}
-      <tr><td colspan="5" class="muted">لا توجد منتجات.</td></tr>
       {% endfor %}
     </tbody>
   </table>
+  <div class="empty-state" id="stock-empty" hidden>{{ icon('search', 28) }}<p>لا توجد منتجات مطابقة.</p></div>
 </div>
 {% endblock %}

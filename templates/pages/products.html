@@ -1,31 +1,54 @@
 {% extends "base.html" %}
+{% from "_icons.html" import icon %}
 {% block content %}
 <div class="page-head">
   <div>
     <h1>المنتجات</h1>
-    <p class="muted">{{ products|length }} منتج</p>
+    <p class="muted"><span id="visible-count">{{ products|length }}</span> من {{ products|length }} منتج</p>
   </div>
   <span class="demo-badge">بيانات تجريبية للعرض</span>
 </div>
 
-<div class="card">
-  <table>
-    <thead>
-      <tr><th>المنتج</th><th>المتجر</th><th>السعر</th><th>المباع</th><th>الحالة</th></tr>
-    </thead>
-    <tbody>
-      {% for p in products %}
-      <tr>
-        <td>{{ p.name }}</td>
-        <td><span class="store-tag {{ p.store }}">{{ store_names[p.store] }}</span></td>
-        <td>{{ p.price }} ر.س</td>
-        <td>{{ p.sold }}</td>
-        <td><span class="badge {{ 'ok' if p.status == 'active' else 'muted-badge' }}">{{ 'منشور' if p.status == 'active' else 'مسودة' }}</span></td>
-      </tr>
-      {% else %}
-      <tr><td colspan="5" class="muted">لا توجد منتجات.</td></tr>
-      {% endfor %}
-    </tbody>
-  </table>
+<div class="filter-row">
+  <div class="chips" id="product-filter" role="radiogroup" aria-label="فلترة المنتجات">
+    <button class="chip active" data-filter="" role="radio" aria-checked="true">الكل</button>
+    <button class="chip" data-filter="active" role="radio" aria-checked="false">منشور</button>
+    <button class="chip" data-filter="draft" role="radio" aria-checked="false">مسودة</button>
+    <button class="chip" data-filter="out" role="radio" aria-checked="false">نفد</button>
+  </div>
+  <div class="segmented compact" id="view-toggle" aria-label="طريقة العرض">
+    <button data-view="grid" class="active" aria-pressed="true" title="شبكة">{{ icon('grid', 17) }}</button>
+    <button data-view="list" aria-pressed="false" title="قائمة">{{ icon('list', 17) }}</button>
+  </div>
 </div>
+
+<div class="product-grid" id="products">
+  {% for p in products %}
+  <article class="product" tabindex="0"
+           data-status="{{ p.status }}" data-out="{{ 'out' if p.stock == 0 }}"
+           data-search="{{ p.name }} {{ p.category }} {{ store_names[p.store] }}">
+    <div class="product-thumb store-{{ p.store }}">
+      <span>{{ p.name[:1] }}</span>
+      {% if p.stock == 0 %}<span class="thumb-flag danger">نفد</span>
+      {% elif p.stock <= 10 %}<span class="thumb-flag warn">قارب على النفاد</span>{% endif %}
+    </div>
+    <div class="product-body">
+      <div class="product-cat muted small">{{ p.category }}</div>
+      <h3>{{ p.name }}</h3>
+      <div class="product-meta">
+        <span class="price num">{{ p.price }} <small>ر.س</small></span>
+        <span class="store-tag {{ p.store }}">{{ store_names[p.store] }}</span>
+      </div>
+      <div class="product-stats">
+        <div><span class="muted small">المباع</span><strong class="num">{{ p.sold }}</strong></div>
+        <div><span class="muted small">المخزون</span><strong class="num">{{ p.stock }}</strong></div>
+        <div><span class="muted small">الحالة</span>
+          <span class="badge {{ 'ok' if p.status == 'active' else 'neutral' }}">{{ 'منشور' if p.status == 'active' else 'مسودة' }}</span>
+        </div>
+      </div>
+    </div>
+  </article>
+  {% endfor %}
+</div>
+<div class="empty-state" id="products-empty" hidden>{{ icon('search', 28) }}<p>لا توجد منتجات مطابقة.</p></div>
 {% endblock %}

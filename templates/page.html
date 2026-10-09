@@ -1,8 +1,16 @@
 {% extends "base.html" %}
+{% from "_icons.html" import icon %}
 {% block content %}
-<h1>{{ title }}</h1>
-<div class="card">
-  <p>هذه الصفحة قيد الإعداد. سيتم ربطها ببيانات سلة في المرحلة القادمة.</p>
-  <p class="muted">المتجر المعروض لك: {{ store_names[current_user.store] }}</p>
+<div class="page-head">
+  <div>
+    <h1>{{ title }}</h1>
+    <p class="muted">{{ brand.name if store != 'all' else 'كل المتاجر' }}</p>
+  </div>
+</div>
+<div class="card coming">
+  <div class="coming-ic">{{ icon(pages[key].icon, 34) }}</div>
+  <h2>صفحة {{ title }} قيد التجهيز</h2>
+  <p class="muted">هتشتغل ببيانات حقيقية بعد ربط اللوحة بمتاجر سلة.</p>
+  <a class="btn primary" href="{{ url_for('page', key='dashboard') }}">الرجوع للرئيسية</a>
 </div>
 {% endblock %}

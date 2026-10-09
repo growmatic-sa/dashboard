@@ -1,109 +1,177 @@
 {% extends "base.html" %}
+{% from "_icons.html" import icon, panel_mark %}
 {% block content %}
-<div class="page-head">
-  <div>
-    <h1>الرئيسية</h1>
-    <p class="muted">نظرة عامة على {{ store_names[current_user.store] }}</p>
-  </div>
-  <span class="demo-badge">بيانات تجريبية للعرض</span>
-</div>
 
-<section class="stats">
-  <div class="stat">
-    <div class="stat-label">إجمالي المبيعات</div>
-    <div class="stat-value">{{ "{:,}".format(stats.revenue) }} <small>ر.س</small></div>
-    <div class="stat-foot ok">+12% عن الأسبوع الماضي</div>
+<section class="hero">
+  <div class="hero-text">
+    <div class="hero-kicker"><span id="greeting">أهلاً</span>، {{ current_user.name }}</div>
+    <h1>أداء {{ brand.name if store != 'all' else 'كل المتاجر' }}</h1>
+    <p>ملخص المبيعات والطلبات والمخزون في مكان واحد.</p>
   </div>
-  <div class="stat">
-    <div class="stat-label">عدد الطلبات</div>
-    <div class="stat-value">{{ stats.orders }}</div>
-    <div class="stat-foot ok">+5 طلبات اليوم</div>
+  <div class="hero-badge">
+    {% if brand.logo %}
+      <img src="{{ url_for('static', filename=brand.logo) }}" alt="{{ brand.name }}">
+    {% else %}
+      <div class="hero-logos">
+        <img src="{{ url_for('static', filename='brands/smooth-logo.webp') }}" alt="سموذ">
+        <img src="{{ url_for('static', filename='brands/glorias-logo.webp') }}" alt="قلوريز">
+      </div>
+    {% endif %}
   </div>
-  <div class="stat">
-    <div class="stat-label">متوسط الطلب</div>
-    <div class="stat-value">{{ "{:,}".format(stats.avg) }} <small>ر.س</small></div>
-    <div class="stat-foot muted">آخر 7 أيام</div>
-  </div>
-  <div class="stat {{ 'alert' if stats.low else '' }}">
-    <div class="stat-label">منتجات قاربت على النفاد</div>
-    <div class="stat-value">{{ stats.low }}</div>
-    <div class="stat-foot {{ 'danger' if stats.low else 'muted' }}">{{ 'تحتاج تعبئة' if stats.low else 'المخزون مستقر' }}</div>
-  </div>
+  <span class="demo-badge on-hero">بيانات تجريبية للعرض</span>
 </section>
 
-<div class="grid-2">
+<div class="filter-row">
+  <div class="segmented" id="range" role="radiogroup" aria-label="الفترة">
+    <button role="radio" data-days="7" aria-checked="false">7 أيام</button>
+    <button role="radio" data-days="30" aria-checked="true" class="active">30 يوم</button>
+    <button role="radio" data-days="90" aria-checked="false">90 يوم</button>
+  </div>
+  <span class="muted small" id="range-label"></span>
+</div>
+
+<section class="kpis">
+  <article class="kpi" data-kpi="revenue">
+    <div class="kpi-top">
+      <span class="kpi-icon">{{ icon('chart', 18) }}</span>
+      <span class="kpi-label">إجمالي المبيعات</span>
+    </div>
+    <div class="kpi-value"><span data-value>0</span> <small>ر.س</small></div>
+    <div class="kpi-foot"><span class="delta" data-delta></span><span class="muted small">مقارنة بالفترة السابقة</span></div>
+    <svg class="spark" data-spark viewBox="0 0 120 36" preserveAspectRatio="none" aria-hidden="true"></svg>
+  </article>
+  <article class="kpi" data-kpi="orders">
+    <div class="kpi-top">
+      <span class="kpi-icon">{{ icon('bag', 18) }}</span>
+      <span class="kpi-label">عدد الطلبات</span>
+    </div>
+    <div class="kpi-value"><span data-value>0</span></div>
+    <div class="kpi-foot"><span class="delta" data-delta></span><span class="muted small">مقارنة بالفترة السابقة</span></div>
+    <svg class="spark" data-spark viewBox="0 0 120 36" preserveAspectRatio="none" aria-hidden="true"></svg>
+  </article>
+  <article class="kpi" data-kpi="aov">
+    <div class="kpi-top">
+      <span class="kpi-icon">{{ icon('card', 18) }}</span>
+      <span class="kpi-label">متوسط قيمة الطلب</span>
+    </div>
+    <div class="kpi-value"><span data-value>0</span> <small>ر.س</small></div>
+    <div class="kpi-foot"><span class="delta" data-delta></span><span class="muted small">مقارنة بالفترة السابقة</span></div>
+    <svg class="spark" data-spark viewBox="0 0 120 36" preserveAspectRatio="none" aria-hidden="true"></svg>
+  </article>
+  <article class="kpi kpi-alert {{ 'is-alert' if low_count }}">
+    <div class="kpi-top">
+      <span class="kpi-icon">{{ icon('alert', 18) }}</span>
+      <span class="kpi-label">منتجات تحتاج تعبئة</span>
+    </div>
+    <div class="kpi-value"><span>{{ low_count }}</span> <small>منتج</small></div>
+    <div class="kpi-foot">
+      <a class="link small" href="{{ url_for('page', key='inventory') }}">راجع المخزون {{ icon('arrow', 14) }}</a>
+    </div>
+  </article>
+</section>
+
+<div class="grid-main">
+  <section class="card chart-card">
+    <div class="card-head">
+      <div>
+        <h2>المبيعات اليومية</h2>
+        <p class="muted small" id="chart-sub">ر.س لكل يوم</p>
+      </div>
+      <div class="card-tools">
+        <div class="legend" id="chart-legend"></div>
+        <button class="text-btn" id="table-toggle" aria-pressed="false">عرض كجدول</button>
+      </div>
+    </div>
+    <div class="chart" id="sales-chart"></div>
+    <div class="chart-table" id="sales-table" hidden></div>
+  </section>
+
   <section class="card">
     <div class="card-head">
-      <h2>المبيعات خلال 7 أيام</h2>
-      <span class="muted">ر.س</span>
-    </div>
-    <div class="bars">
-      {% for d in week %}
-      <div class="bar-col">
-        <div class="bar-value">{{ "{:,}".format(d.value) }}</div>
-        <div class="bar" style="height: {{ d.pct }}%"></div>
-        <div class="bar-label">{{ d.day }}</div>
+      <div>
+        <h2>حالات الطلبات</h2>
+        <p class="muted small">{{ orders_total }} طلب حديث</p>
       </div>
+    </div>
+    <div class="status-list">
+      {% for name, meta in statuses.items() %}
+        {% set count = status_counts[name] %}
+        {% set pct = (count / orders_total * 100) if orders_total else 0 %}
+        <div class="status-row" tabindex="0" title="{{ name }}: {{ count }} طلب">
+          <div class="status-head">
+            <span class="status-name"><span class="status-ic {{ meta[0] }}">{{ icon(meta[1], 14) }}</span>{{ name }}</span>
+            <span class="status-num"><strong>{{ count }}</strong> <span class="muted small">{{ pct|round|int }}%</span></span>
+          </div>
+          <div class="meter"><span class="{{ meta[0] }}" style="--w: {{ pct|round(1) }}%"></span></div>
+        </div>
       {% endfor %}
     </div>
   </section>
-
-  <section class="card">
-    <div class="card-head">
-      <h2>تنبيهات المخزون</h2>
-      <a href="{{ url_for('page', key='inventory') }}" class="link">عرض الكل</a>
-    </div>
-    {% for p in low_stock %}
-    <div class="list-row">
-      <div>
-        <div class="row-title">{{ p.name }}</div>
-        <div class="muted small">{{ store_names[p.store] }}</div>
-      </div>
-      <span class="badge {{ 'danger' if p.stock == 0 else 'warn' }}">{{ 'نفد' if p.stock == 0 else p.stock ~ ' قطعة' }}</span>
-    </div>
-    {% else %}
-    <p class="muted">لا توجد تنبيهات حالياً.</p>
-    {% endfor %}
-  </section>
 </div>
 
-<div class="grid-2">
+<div class="grid-3">
   <section class="card">
     <div class="card-head">
       <h2>آخر الطلبات</h2>
-      <a href="{{ url_for('page', key='orders') }}" class="link">عرض الكل</a>
+      <a href="{{ url_for('page', key='orders') }}" class="link small">الكل {{ icon('arrow', 14) }}</a>
     </div>
-    <table>
-      <thead><tr><th>رقم</th><th>العميل</th><th>المجموع</th><th>الحالة</th></tr></thead>
-      <tbody>
-        {% for o in recent_orders %}
-        <tr>
-          <td>#{{ o.id }}</td>
-          <td>{{ o.customer }}</td>
-          <td>{{ o.total }} ر.س</td>
-          <td><span class="badge {{ status_class[o.status] }}">{{ o.status }}</span></td>
-        </tr>
-        {% else %}
-        <tr><td colspan="4" class="muted">لا توجد طلبات.</td></tr>
-        {% endfor %}
-      </tbody>
-    </table>
+    <ul class="feed">
+      {% for o in recent_orders %}
+      <li>
+        <div class="feed-avatar store-{{ o.store }}">{{ o.customer[:1] }}</div>
+        <div class="feed-body">
+          <div class="feed-title">{{ o.customer }} <span class="muted small">#{{ o.id }}</span></div>
+          <div class="muted small">{{ store_names[o.store] }} · {{ o.qty }} قطع</div>
+        </div>
+        <div class="feed-end">
+          <div class="num">{{ "{:,}".format(o.total) }} <small>ر.س</small></div>
+          <span class="badge {{ statuses[o.status][0] }}">{{ o.status }}</span>
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
   </section>
 
   <section class="card">
     <div class="card-head">
       <h2>الأكثر مبيعاً</h2>
+      <a href="{{ url_for('page', key='products') }}" class="link small">الكل {{ icon('arrow', 14) }}</a>
     </div>
     {% set max_sold = top_products[0].sold if top_products else 1 %}
-    {% for p in top_products %}
-    <div class="progress-row">
-      <div class="progress-head">
-        <span>{{ p.name }}</span>
-        <span class="muted">{{ p.sold }} قطعة</span>
-      </div>
-      <div class="progress"><div style="width: {{ (p.sold / max_sold * 100) | round | int }}%"></div></div>
+    <ol class="rank">
+      {% for p in top_products %}
+      <li>
+        <span class="rank-n">{{ loop.index }}</span>
+        <div class="rank-body">
+          <div class="rank-head"><span>{{ p.name }}</span><span class="num">{{ p.sold }} <small class="muted">قطعة</small></span></div>
+          <div class="meter thin"><span class="brand" style="--w: {{ (p.sold / max_sold * 100)|round(1) }}%"></span></div>
+        </div>
+      </li>
+      {% endfor %}
+    </ol>
+  </section>
+
+  <section class="card">
+    <div class="card-head">
+      <h2>تنبيهات المخزون</h2>
+      <a href="{{ url_for('page', key='inventory') }}" class="link small">الكل {{ icon('arrow', 14) }}</a>
     </div>
-    {% endfor %}
+    <ul class="alerts">
+      {% for p in low_stock %}
+      <li>
+        <span class="alert-ic {{ 'danger' if p.stock == 0 else 'warn' }}">{{ icon('alert', 16) }}</span>
+        <div class="feed-body">
+          <div class="feed-title">{{ p.name }}</div>
+          <div class="muted small">{{ store_names[p.store] }}</div>
+        </div>
+        <span class="badge {{ 'danger' if p.stock == 0 else 'warn' }}">{{ 'نفد' if p.stock == 0 else 'باقي ' ~ p.stock }}</span>
+      </li>
+      {% else %}
+      <li class="empty">{{ icon('check', 18) }} كل المنتجات متوفرة</li>
+      {% endfor %}
+    </ul>
   </section>
 </div>
+
+<script type="application/json" id="dash-data">{{ dash_data|tojson }}</script>
 {% endblock %}

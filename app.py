@@ -10,7 +10,7 @@ envfile.load()
 
 import db  # noqa: E402  (يجب أن يأتي بعد تحميل .env)
 import sample_data as sample
-from brands import brand_for
+from brands import PANEL, SERIES, brand_for
 from permissions import PAGES, ROLES, STORES, can_access_page
 
 app = Flask(__name__)
@@ -69,11 +69,32 @@ def check_csrf():
             abort(400, description="طلب غير صالح، حدّث الصفحة وحاول تاني.")
 
 
+def selected_store(user):
+    """المتجر المعروض حالياً. المستخدم المقيّد بمتجر يشوف متجره بس."""
+    if user is None:
+        return "all"
+    if user["store"] != "all":
+        return user["store"]
+    requested = request.args.get("store")
+    if requested in STORES:
+        session["store"] = requested
+    return session.get("store", "all")
+
+
 @app.context_processor
 def inject_globals():
     user = current_user()
+    store = selected_store(user)
+    if user is None or user["store"] == "all":
+        store_options = list(STORES)
+    else:
+        store_options = [user["store"]]
     return {
-        "brand": brand_for(user["store"]) if user else brand_for("all"),
+        "brand": brand_for(store),
+        "panel": PANEL,
+        "store": store,
+        "store_options": store_options,
+        "brand_for": brand_for,
         "csrf_token": csrf_token,
         "current_user": user,
         "pages": PAGES,
@@ -140,37 +161,45 @@ def page(key):
     if not can_access_page(user["role"], key):
         abort(403)
     template = PAGE_TEMPLATES.get(key, "page.html")
-    ctx = build_page_context(key, user["store"])
+    ctx = build_page_context(key, selected_store(user))
     return render_template(template, key=key, title=PAGES[key]["label"], **ctx)
 
 
 def build_page_context(key, store):
     orders = sample.for_store(sample.ORDERS, store)
     products = sample.for_store(sample.PRODUCTS, store)
-    live_orders = [o for o in orders if o["status"] != "ملغي"]
-    revenue = sum(o["total"] for o in live_orders)
     low = sample.low_stock(products)
     if key == "dashboard":
-        peak = max(d["value"] for d in sample.SALES_WEEK)
+        stores = ["smooth", "glorias"] if store == "all" else [store]
         return {
-            "stats": {
-                "revenue": revenue,
-                "orders": len(live_orders),
-                "avg": round(revenue / len(live_orders)) if live_orders else 0,
-                "low": len(low),
+            "dash_data": {
+                "stores": [
+                    {"key": s, "name": STORES[s], "color": SERIES[s]} for s in stores
+                ],
+                "daily": sample.DAILY,
             },
-            "week": [{**d, "pct": round(d["value"] / peak * 100)} for d in sample.SALES_WEEK],
             "recent_orders": orders[:5],
-            "low_stock": low[:5],
-            "top_products": sorted(products, key=lambda p: p["sold"], reverse=True)[:4],
-            "status_class": sample.STATUS_CLASS,
+            "low_stock": sorted(low, key=lambda p: p["stock"])[:5],
+            "low_count": len(low),
+            "top_products": sorted(products, key=lambda p: p["sold"], reverse=True)[:5],
+            "status_counts": sample.status_counts(orders),
+            "statuses": sample.STATUSES,
+            "orders_total": len(orders),
         }
     if key == "orders":
-        return {"orders": orders, "status_class": sample.STATUS_CLASS}
+        return {
+            "orders": orders,
+            "statuses": sample.STATUSES,
+            "status_counts": sample.status_counts(orders),
+        }
     if key == "products":
         return {"products": products}
     if key == "inventory":
-        return {"products": products, "low": low}
+        return {
+            "products": sorted(products, key=lambda p: p["stock"]),
+            "low": low,
+            "out": [p for p in products if p["stock"] == 0],
+        }
     return {}
 
 

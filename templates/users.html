@@ -1,58 +1,70 @@
 {% extends "base.html" %}
+{% from "_icons.html" import icon %}
 {% block content %}
-<h1>المستخدمون</h1>
-
-<div class="card">
-  <h2>إضافة مستخدم</h2>
-  <form method="post" action="{{ url_for('users_new') }}" class="grid-form">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <label>الاسم <input type="text" name="name" required></label>
-    <label>البريد الإلكتروني <input type="email" name="email" required></label>
-    <label>كلمة المرور (8 أحرف على الأقل) <input type="password" name="password" minlength="8" required></label>
-    <label>الدور
-      <select name="role">
-        {% for key, label in role_names.items() %}
-          {% if key != 'owner' or current_user.role == 'owner' %}
-            <option value="{{ key }}">{{ label }}</option>
-          {% endif %}
-        {% endfor %}
-      </select>
-    </label>
-    <label>المتجر
-      <select name="store">
-        {% for key, label in store_names.items() %}
-          <option value="{{ key }}">{{ label }}</option>
-        {% endfor %}
-      </select>
-    </label>
-    <div><button class="btn primary" type="submit">إضافة</button></div>
-  </form>
+<div class="page-head">
+  <div>
+    <h1>المستخدمون</h1>
+    <p class="muted">{{ users|length }} مستخدم · حدّد دور كل شخص والمتجر اللي يشوفه</p>
+  </div>
 </div>
 
-<div class="card">
-  <table>
-    <thead>
-      <tr><th>الاسم</th><th>البريد</th><th>الدور</th><th>المتجر</th><th>الحالة</th><th></th></tr>
-    </thead>
-    <tbody>
-      {% for u in users %}
-      <tr>
-        <td>{{ u.name }}</td>
-        <td>{{ u.email }}</td>
-        <td>{{ role_names[u.role] }}</td>
-        <td>{{ store_names[u.store] }}</td>
-        <td>{{ 'مفعّل' if u.active else 'موقوف' }}</td>
-        <td>
-          {% if u.id != current_user.id %}
-          <form method="post" action="{{ url_for('users_toggle', user_id=u.id) }}">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <button class="btn ghost" type="submit">{{ 'إيقاف' if u.active else 'تفعيل' }}</button>
-          </form>
-          {% endif %}
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+<div class="grid-main">
+  <div class="card flush">
+    <table class="data-table">
+      <thead>
+        <tr><th>المستخدم</th><th>الدور</th><th>المتجر</th><th>الحالة</th><th></th></tr>
+      </thead>
+      <tbody>
+        {% for u in users %}
+        <tr>
+          <td>
+            <div class="cell-user">
+              <span class="mini-avatar {{ 'store-' ~ u.store if u.store != 'all' else '' }}" {% if u.store == 'all' %}style="background: var(--soft); color: var(--primary)"{% endif %}>{{ u.name[:1] }}</span>
+              <div><div>{{ u.name }}</div><div class="muted small" dir="ltr">{{ u.email }}</div></div>
+            </div>
+          </td>
+          <td>{{ role_names[u.role] }}</td>
+          <td>{% if u.store == 'all' %}<span class="badge neutral">كل المتاجر</span>{% else %}<span class="store-tag {{ u.store }}">{{ store_names[u.store] }}</span>{% endif %}</td>
+          <td><span class="badge {{ 'ok' if u.active else 'danger' }}">{{ 'مفعّل' if u.active else 'موقوف' }}</span></td>
+          <td class="end">
+            {% if u.id != current_user.id %}
+            <form method="post" action="{{ url_for('users_toggle', user_id=u.id) }}">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button class="btn ghost" type="submit">{{ 'إيقاف' if u.active else 'تفعيل' }}</button>
+            </form>
+            {% else %}<span class="muted small">أنت</span>{% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-head"><h2>إضافة مستخدم</h2></div>
+    <form method="post" action="{{ url_for('users_new') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <label class="field">الاسم <input type="text" name="name" required></label>
+      <label class="field">البريد الإلكتروني <input type="email" name="email" required dir="ltr"></label>
+      <label class="field">كلمة المرور <span class="muted small">(8 أحرف على الأقل)</span> <input type="password" name="password" minlength="8" required dir="ltr"></label>
+      <label class="field">الدور
+        <select name="role">
+          {% for key, label in role_names.items() %}
+            {% if key != 'owner' or current_user.role == 'owner' %}
+              <option value="{{ key }}">{{ label }}</option>
+            {% endif %}
+          {% endfor %}
+        </select>
+      </label>
+      <label class="field">المتجر
+        <select name="store">
+          {% for key, label in store_names.items() %}
+            <option value="{{ key }}">{{ label }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <button class="btn primary block" type="submit">{{ icon('plus', 18) }} إضافة المستخدم</button>
+    </form>
+  </div>
 </div>
 {% endblock %}
