@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>الإعدادات</h1>
+    <p class="muted">الافتراضات المستخدمة في حساب التقارير</p>
+  </div>
+</div>
+
+<div class="grid-2">
+  <section class="card">
+    <div class="card-head"><div><h2>الضريبة</h2><p class="muted small">ضريبة القيمة المضافة</p></div><span class="kpi-icon">{{ icon('receipt', 18) }}</span></div>
+    <dl class="facts">
+      <div><dt>نسبة الضريبة</dt><dd class="num">{{ (finance.VAT_RATE * 100)|round|int }}%</dd></div>
+      <div><dt>الأسعار في المتجر</dt><dd>{{ 'شاملة الضريبة' if finance.PRICES_INCLUDE_VAT else 'غير شاملة الضريبة' }}</dd></div>
+      <div><dt>طريقة الحساب</dt><dd class="num">المبلغ × {{ (finance.VAT_RATE * 100)|round|int }} ÷ {{ 100 + (finance.VAT_RATE * 100)|round|int }}</dd></div>
+      <div><dt>تشمل الشحن؟</dt><dd>نعم، الشحن خاضع للضريبة</dd></div>
+    </dl>
+  </section>
+
+  <section class="card">
+    <div class="card-head"><div><h2>الشحن المحصّل من العميل</h2><p class="muted small">شامل الضريبة</p></div><span class="kpi-icon">{{ icon('truck', 18) }}</span></div>
+    <dl class="facts">
+      {% for s, fee in finance.SHIPPING_FEE.items() %}
+      <div><dt>{{ store_names[s] }}</dt><dd class="num">{{ fee }} ر.س · مجاني فوق {{ finance.FREE_SHIPPING_OVER[s] }} ر.س</dd></div>
+      {% endfor %}
+    </dl>
+  </section>
+
+  <section class="card">
+    <div class="card-head"><div><h2>تكلفة شركة الشحن</h2><p class="muted small">لكل طلب، بدون ضريبة</p></div><span class="kpi-icon">{{ icon('pin', 18) }}</span></div>
+    <dl class="facts">
+      {% for city, cost in finance.CARRIER_COST.items() %}
+      <div><dt>{{ city }}</dt><dd class="num">{{ cost }} ر.س</dd></div>
+      {% endfor %}
+      <div><dt>باقي المدن</dt><dd class="num">{{ finance.CARRIER_COST_DEFAULT }} ر.س</dd></div>
+    </dl>
+  </section>
+
+  <section class="card">
+    <div class="card-head"><div><h2>رسوم بوابات الدفع</h2><p class="muted small">نسبة من المبلغ + رسم ثابت</p></div><span class="kpi-icon">{{ icon('card', 18) }}</span></div>
+    <dl class="facts">
+      {% for method, fee in finance.PAYMENT_FEES.items() %}
+      <div><dt>{{ method }}</dt><dd class="num">{{ (fee[0] * 100)|round(1) }}%{% if fee[1] %} + {{ fee[1] }} ر.س{% endif %}</dd></div>
+      {% endfor %}
+    </dl>
+  </section>
+</div>
+
+<p class="muted small assumptions">{{ icon('alert', 14) }} القيم دي تقديرية للعرض. بعد ربط سلة، الشحن والضريبة هيتسحبوا من كل طلب، والرسوم تقدر تعدّلها حسب عقدك مع شركات الشحن والدفع.</p>
+{% endblock %}

@@ -2,13 +2,17 @@ import os
 import secrets
 from functools import wraps
 
-from flask import Flask, abort, flash, g, redirect, render_template, request, session, url_for
+from markupsafe import Markup
+from flask import Flask, Response, abort, flash, g, redirect, render_template, request, session, url_for
 from werkzeug.security import check_password_hash, generate_password_hash
 
 import envfile
 envfile.load()
 
 import db  # noqa: E402  (يجب أن يأتي بعد تحميل .env)
+import export
+import finance
+import reports
 import sample_data as sample
 from brands import PANEL, SERIES, brand_for
 from permissions import PAGES, ROLES, STORES, can_access_page
@@ -20,6 +24,23 @@ app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 app.config["SESSION_COOKIE_SECURE"] = os.environ.get("COOKIE_SECURE", "0") == "1"
 
 db.init_app(app)
+
+
+@app.template_filter("money")
+def money_filter(v, digits=0):
+    return f"{v:,.{digits}f}"
+
+
+@app.template_filter("signed")
+def signed_filter(v, digits=0):
+    """رقم بإشارة سالب في مكانها الصحيح داخل النص العربي."""
+    text = f"{'−' if v < 0 else ''}{abs(v):,.{digits}f}"
+    return Markup('<bdi dir="ltr"{}>{}</bdi>').format(Markup(' class="neg"') if v < 0 else "", text)
+
+
+@app.template_filter("pct")
+def pct_filter(v):
+    return f"{v:.1f}%"
 
 
 # ---------- helpers ----------
@@ -149,6 +170,8 @@ PAGE_TEMPLATES = {
     "orders": "pages/orders.html",
     "products": "pages/products.html",
     "inventory": "pages/inventory.html",
+    "reports": "pages/reports.html",
+    "settings": "pages/settings.html",
 }
 
 
@@ -194,6 +217,18 @@ def build_page_context(key, store):
         }
     if key == "products":
         return {"products": products}
+    if key == "reports":
+        r = reports.build(request.args.get("kind", "month"), request.args.get("period"), store)
+        stores = ["smooth", "glorias"] if store == "all" else [store]
+        r["chart"] = {
+            "stores": [{"key": s, "name": STORES[s], "color": SERIES[s]} for s in stores],
+            "trend": r["trend"],
+            "current": r["period"]["key"],
+        }
+        r["finance_vat"] = finance.VAT_RATE
+        return r
+    if key == "settings":
+        return {"finance": finance}
     if key == "inventory":
         return {
             "products": sorted(products, key=lambda p: p["stock"]),
@@ -201,6 +236,24 @@ def build_page_context(key, store):
             "out": [p for p in products if p["stock"] == 0],
         }
     return {}
+
+
+@app.route("/reports/export")
+@page_required("reports")
+def reports_export():
+    user = current_user()
+    store = selected_store(user)
+    fmt = request.args.get("format", "xlsx")
+    r = reports.build(request.args.get("kind", "month"), request.args.get("period"), store)
+    label = STORES[store]
+    filename = f"report-{store}-{r['kind']}-{r['period']['key']}"
+    db.log_action(user["id"], "report_exported", f"تصدير {fmt}: {label} — {r['period']['label']}")
+    if fmt == "csv":
+        return Response(export.build_csv(r, STORES), mimetype="text/csv; charset=utf-8",
+                        headers={"Content-Disposition": f"attachment; filename={filename}.csv"})
+    data = export.build_xlsx(r, label, STORES, brand_for(store)["light"]["fill"])
+    return Response(data, mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    headers={"Content-Disposition": f"attachment; filename={filename}.xlsx"})
 
 
 # ---------- users (owner/manager only) ----------

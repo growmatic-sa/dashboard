@@ -70,6 +70,14 @@
   </article>
 </section>
 
+<section class="fin-strip">
+  <div class="fin"><span class="mini-ic brand">{{ icon('receipt', 18) }}</span><div><span class="muted small">ضريبة القيمة المضافة</span><strong class="num"><bdi dir="ltr" data-fin="vat">0</bdi> <small class="muted">ر.س</small></strong></div></div>
+  <div class="fin"><span class="mini-ic brand">{{ icon('truck', 18) }}</span><div><span class="muted small">صافي الشحن</span><strong class="num"><bdi dir="ltr" data-fin="ship">0</bdi> <small class="muted">ر.س</small></strong></div></div>
+  <div class="fin"><span class="mini-ic brand">{{ icon('spark', 18) }}</span><div><span class="muted small">صافي الربح التقديري</span><strong class="num"><bdi dir="ltr" data-fin="profit">0</bdi> <small class="muted">ر.س</small></strong></div></div>
+  <div class="fin"><span class="mini-ic brand">{{ icon('percent', 18) }}</span><div><span class="muted small">هامش الربح</span><strong class="num" data-fin="margin">0%</strong></div>
+    {% if can_page('reports') %}<a class="link small fin-link" href="{{ url_for('page', key='reports') }}">التقارير {{ icon('arrow', 14) }}</a>{% endif %}</div>
+</section>
+
 <div class="grid-main">
   <section class="card chart-card">
     <div class="card-head">

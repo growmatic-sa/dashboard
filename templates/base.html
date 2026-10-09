@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=5">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=7">
   <style>
     :root {
       --fill: {{ brand.light.fill }}; --primary: {{ brand.light.primary }}; --strong: {{ brand.light.strong }};
@@ -124,7 +124,7 @@
 
 <div class="toast-stack" id="toasts" aria-live="polite"></div>
 {% block overlay %}{% endblock %}
-<script src="{{ url_for('static', filename='app.js') }}?v=5"></script>
+<script src="{{ url_for('static', filename='app.js') }}?v=7"></script>
 {% block scripts %}{% endblock %}
 {% else %}
   {% block public %}{% endblock %}

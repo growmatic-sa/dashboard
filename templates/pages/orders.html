@@ -71,7 +71,13 @@
 
     <h3>المنتجات</h3>
     <ul class="line-items" id="d-lines"></ul>
-    <div class="line-total"><span>الإجمالي</span><strong id="d-total"></strong></div>
+    <ul class="money-rows">
+      <li><span>المنتجات</span><span class="num" id="d-subtotal"></span></li>
+      <li><span>الخصم</span><span class="num" id="d-discount"></span></li>
+      <li><span>الشحن</span><span class="num" id="d-shipping"></span></li>
+      <li><span>منها ضريبة القيمة المضافة 15%</span><span class="num" id="d-vat"></span></li>
+      <li class="total"><span>الإجمالي شامل الضريبة</span><span class="num" id="d-total"></span></li>
+    </ul>
 
     <h3>حالة الطلب</h3>
     <ol class="timeline" id="d-timeline"></ol>

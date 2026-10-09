@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+
+{% macro delta(v, invert=False) -%}
+  {% if v is not none %}
+    {% set good = (v >= 0) != invert %}
+    <span class="delta {{ 'up' if good else 'down' }}">{{ '▲' if v >= 0 else '▼' }} {{ v|abs|round(1) }}%</span>
+  {%- else -%}
+    <span class="muted small">لا توجد فترة سابقة</span>
+  {%- endif %}
+{%- endmacro %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>التقارير {{ 'الشهرية' if kind == 'month' else 'الأسبوعية' }}</h1>
+    <p class="muted">
+      {{ period.label }} · {{ brand.name if store != 'all' else 'كل المتاجر' }}
+      {% if period.partial %}<span class="badge warn">فترة غير مكتملة</span>{% endif %}
+    </p>
+  </div>
+  <span class="demo-badge">بيانات تجريبية للعرض</span>
+</div>
+
+<form class="filter-row report-filters" method="get" action="{{ url_for('page', key='reports') }}" id="report-form">
+  <div class="filter-group">
+    <div class="segmented" role="radiogroup" aria-label="نوع التقرير">
+      {% for k, label in kinds.items() %}
+        <a role="radio" aria-checked="{{ 'true' if k == kind else 'false' }}" class="seg-link {{ 'active' if k == kind }}"
+           href="{{ url_for('page', key='reports', kind=k) }}">{{ label }}</a>
+      {% endfor %}
+    </div>
+    <input type="hidden" name="kind" value="{{ kind }}">
+    <label class="select-wrap">
+      <span class="sr-only">اختر الفترة</span>
+      {{ icon('clock', 17) }}
+      <select name="period" id="period-select">
+        {% for p in periods %}
+          <option value="{{ p.key }}" {{ 'selected' if p.key == period.key }}>{{ p.label }}{{ ' (جارية)' if p.partial and loop.first }}</option>
+        {% endfor %}
+      </select>
+    </label>
+  </div>
+  <div class="export-group">
+    <a class="btn" href="{{ url_for('reports_export', kind=kind, period=period.key, format='xlsx') }}">{{ icon('download', 17) }} Excel</a>
+    <a class="btn" href="{{ url_for('reports_export', kind=kind, period=period.key, format='csv') }}">{{ icon('download', 17) }} CSV</a>
+    <button class="btn" type="button" id="print-btn">{{ icon('print', 17) }} طباعة / PDF</button>
+  </div>
+</form>
+
+<div class="print-head">
+  <strong>{{ panel.name }} — تقرير {{ kinds[kind] }}</strong>
+  <span>{{ period.label }} · {{ brand.name if store != 'all' else 'كل المتاجر' }} · بيانات تجريبية</span>
+</div>
+
+<section class="kpis">
+  <article class="kpi plain">
+    <div class="kpi-top"><span class="kpi-icon">{{ icon('chart', 18) }}</span><span class="kpi-label">إجمالي المبيعات</span></div>
+    <div class="kpi-value">{{ m.gross|money }} <small>ر.س</small></div>
+    <div class="kpi-foot">{{ delta(deltas.gross) }}<span class="muted small">شامل الضريبة والشحن</span></div>
+  </article>
+  <article class="kpi plain">
+    <div class="kpi-top"><span class="kpi-icon">{{ icon('spark', 18) }}</span><span class="kpi-label">صافي الربح التقديري</span></div>
+    <div class="kpi-value">{{ m.profit|money }} <small>ر.س</small></div>
+    <div class="kpi-foot">{{ delta(deltas.profit) }}<span class="muted small">هامش {{ m.margin|pct }}</span></div>
+  </article>
+  <article class="kpi plain">
+    <div class="kpi-top"><span class="kpi-icon">{{ icon('receipt', 18) }}</span><span class="kpi-label">ضريبة القيمة المضافة</span></div>
+    <div class="kpi-value">{{ m.vat|money }} <small>ر.س</small></div>
+    <div class="kpi-foot"><span class="muted small">{{ (finance_vat * 100)|round|int }}% مستحقة لهيئة الزكاة</span></div>
+  </article>
+  <article class="kpi plain">
+    <div class="kpi-top"><span class="kpi-icon">{{ icon('bag', 18) }}</span><span class="kpi-label">عدد الطلبات</span></div>
+    <div class="kpi-value">{{ m.orders|money }}</div>
+    <div class="kpi-foot">{{ delta(deltas.orders) }}<span class="muted small">{{ m.cancelled }} ملغي</span></div>
+  </article>
+</section>
+
+<section class="metric-grid">
+  <div class="metric"><span class="muted small">صافي الإيرادات بدون ضريبة</span><strong class="num">{{ m.net|money }} <small>ر.س</small></strong>{{ delta(deltas.net) }}</div>
+  <div class="metric"><span class="muted small">متوسط قيمة الطلب</span><strong class="num">{{ m.aov|money }} <small>ر.س</small></strong>{{ delta(deltas.aov) }}</div>
+  <div class="metric"><span class="muted small">صافي الشحن</span><strong class="num">{{ m.ship_net|signed }} <small>ر.س</small></strong><span class="muted small">{{ m.free_ship }} طلب بشحن مجاني</span></div>
+  <div class="metric"><span class="muted small">الخصومات الممنوحة</span><strong class="num">{{ m.discount|money }} <small>ر.س</small></strong><span class="muted small">{{ m.discount_rate|pct }} من المبيعات</span></div>
+  <div class="metric"><span class="muted small">رسوم بوابات الدفع</span><strong class="num">{{ m.pay_fee|money }} <small>ر.س</small></strong><span class="muted small">{{ (m.pay_fee / m.gross * 100 if m.gross else 0)|pct }} من الإجمالي</span></div>
+  <div class="metric"><span class="muted small">نسبة الإلغاء</span><strong class="num">{{ m.cancel_rate|pct }}</strong><span class="muted small">{{ m.cancelled }} من {{ m.orders + m.cancelled }} طلب</span></div>
+  <div class="metric"><span class="muted small">العملاء</span><strong class="num">{{ m.customers|money }}</strong><span class="muted small">{{ m.new_customers }} جديد · {{ m.returning_customers }} عائد</span></div>
+  <div class="metric"><span class="muted small">القطع المباعة</span><strong class="num">{{ m["items"]|money }}</strong><span class="muted small">{{ m.items_per_order|round(2) }} قطعة لكل طلب</span></div>
+</section>
+
+<div class="grid-main">
+  <section class="card">
+    <div class="card-head">
+      <div>
+        <h2>المبيعات حسب {{ 'الشهر' if kind == 'month' else 'الأسبوع' }}</h2>
+        <p class="muted small">شامل الضريبة · الفترة المختارة مميّزة</p>
+      </div>
+      <div class="card-tools">
+        <div class="legend" id="trend-legend"></div>
+        <button class="text-btn no-print" id="trend-table-toggle" aria-pressed="false">عرض كجدول</button>
+      </div>
+    </div>
+    <div class="chart" id="trend-chart"></div>
+    <div class="chart-table" id="trend-table" hidden></div>
+  </section>
+
+  <section class="card">
+    <div class="card-head">
+      <div>
+        <h2>قائمة الدخل</h2>
+        <p class="muted small">من إجمالي المبيعات لصافي الربح</p>
+      </div>
+    </div>
+    <ul class="statement">
+      {% for line in statement %}
+        <li class="st-{{ line.kind }}">
+          <span>{{ line.label }}</span>
+          <strong class="num">{{ line.value|signed }}</strong>
+        </li>
+      {% endfor %}
+    </ul>
+  </section>
+</div>
+
+<div class="grid-2">
+  <section class="card">
+    <div class="card-head">
+      <div><h2>تفاصيل الضريبة</h2><p class="muted small">ضريبة القيمة المضافة على المبيعات والشحن</p></div>
+      <span class="kpi-icon">{{ icon('receipt', 18) }}</span>
+    </div>
+    <dl class="facts">
+      <div><dt>المبيعات الخاضعة للضريبة (شامل)</dt><dd class="num">{{ m.gross|money(2) }}</dd></div>
+      <div><dt>القيمة قبل الضريبة</dt><dd class="num">{{ m.net|money(2) }}</dd></div>
+      <div><dt>ضريبة على المنتجات</dt><dd class="num">{{ (m.subtotal - m.discount - m.merch_ex_vat)|money(2) }}</dd></div>
+      <div><dt>ضريبة على الشحن</dt><dd class="num">{{ (m.shipping - m.ship_ex_vat)|money(2) }}</dd></div>
+      <div class="hl"><dt>إجمالي الضريبة المستحقة</dt><dd class="num">{{ m.vat|money(2) }} ر.س</dd></div>
+    </dl>
+  </section>
+
+  <section class="card">
+    <div class="card-head">
+      <div><h2>تفاصيل الشحن</h2><p class="muted small">المحصّل من العملاء مقابل تكلفة شركات الشحن</p></div>
+      <span class="kpi-icon">{{ icon('truck', 18) }}</span>
+    </div>
+    <dl class="facts">
+      <div><dt>الشحن المحصّل (شامل الضريبة)</dt><dd class="num">{{ m.shipping|money(2) }}</dd></div>
+      <div><dt>إيراد الشحن بدون ضريبة</dt><dd class="num">{{ m.ship_ex_vat|money(2) }}</dd></div>
+      <div><dt>تكلفة شركات الشحن</dt><dd class="num">{{ (-m.ship_cost)|signed(2) }}</dd></div>
+      <div><dt>متوسط تكلفة الشحن للطلب</dt><dd class="num">{{ (m.ship_cost / m.orders if m.orders else 0)|money(2) }}</dd></div>
+      <div class="hl"><dt>صافي الشحن</dt><dd class="num">{{ m.ship_net|signed(2) }} ر.س</dd></div>
+    </dl>
+  </section>
+</div>
+
+<section class="card flush">
+  <div class="card-head padded">
+    <div><h2>أداء المنتجات</h2><p class="muted small">مرتّبة حسب المبيعات · الربح بعد تكلفة البضاعة وبدون ضريبة</p></div>
+  </div>
+  <table class="data-table">
+    <thead>
+      <tr><th>المنتج</th><th>المتجر</th><th class="end">القطع</th><th class="end">الطلبات</th><th class="end">المبيعات</th><th class="end">مجمل الربح</th><th>الهامش</th></tr>
+    </thead>
+    <tbody>
+      {% for p in products %}
+      <tr>
+        <td><strong>{{ p.name }}</strong></td>
+        <td><span class="store-tag {{ p.store }}">{{ store_names[p.store] }}</span></td>
+        <td class="end num">{{ p.qty|money }}</td>
+        <td class="end num">{{ p.orders|money }}</td>
+        <td class="end num">{{ p.sales|money }} <small class="muted">ر.س</small></td>
+        <td class="end num">{{ p.profit|signed }} <small class="muted">ر.س</small></td>
+        <td class="meter-cell">
+          <div class="meter-inline"><div class="meter thin"><span class="brand" style="--w: {{ p.margin|round(1) }}%"></span></div><span class="num small">{{ p.margin|round|int }}%</span></div>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="7" class="muted">لا توجد مبيعات في هذه الفترة.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+
+<div class="grid-{{ 3 if stores_split else 2 }} spaced">
+  {% for title, rows, ic in [('المبيعات حسب المدينة', cities, 'pin'), ('طرق الدفع', payments, 'card')] + ([('توزيع المتاجر', stores_split, 'boxes')] if stores_split else []) %}
+  <section class="card">
+    <div class="card-head"><h2>{{ title }}</h2><span class="kpi-icon">{{ icon(ic, 18) }}</span></div>
+    <ul class="share-list">
+      {% for r in rows[:8] %}
+      <li>
+        <div class="share-head">
+          <span>{{ store_names[r.name] if r.name in store_names else r.name }}</span>
+          <span class="num"><strong>{{ r.sales|money }}</strong> <small class="muted">ر.س · {{ r.orders }} طلب</small></span>
+        </div>
+        <div class="meter-inline"><div class="meter thin"><span class="brand" style="--w: {{ r.share|round(1) }}%"></span></div><span class="num small muted">{{ r.share|round|int }}%</span></div>
+      </li>
+      {% endfor %}
+    </ul>
+  </section>
+  {% endfor %}
+</div>
+
+<p class="muted small assumptions">
+  {{ icon('alert', 14) }}
+  الحسابات مبنية على افتراضات: أسعار شاملة ضريبة {{ (finance_vat * 100)|round|int }}%، وتكلفة شحن ورسوم دفع تقديرية.
+  {% if can_page('settings') %}<a class="link" href="{{ url_for('page', key='settings') }}">راجع الافتراضات</a>{% endif %}
+</p>
+
+<script type="application/json" id="trend-data">{{ chart|tojson }}</script>
+{% endblock %}
